@@ -1,7 +1,9 @@
+# classes.py
 import os
 import sys
-import pygame
 
+import pygame
+SHIP_SPEED = 5
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
@@ -27,15 +29,40 @@ class MainShip(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = screen_width // 2
         self.rect.bottom = screen_height
-        self.speed = 5
+        self.speed = SHIP_SPEED
+        self.move_up = False
+        self.move_down = False
+        self.move_left = False
+        self.move_right = False
 
-    def update(self, *args):
-      keys = pygame.key.get_pressed()
-      if keys[pygame.K_w]:
-          self.rect.y -= self.speed
-      if keys[pygame.K_s]:
-          self.rect.y += self.speed
-      if keys[pygame.K_a]:
-          self.rect.x -= self.speed
-      if keys[pygame.K_d]:
-          self.rect.x += self.speed
+    def update(self):
+        if self.move_up:
+            self.rect.y -= self.speed
+        if self.move_down:
+            self.rect.y += self.speed
+        if self.move_left:
+            self.rect.x -= self.speed
+        if self.move_right:
+            self.rect.x += self.speed
+    # метод для движения при нажатии на клавиши wasd
+    def handle_input(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                self.move_up = True
+            if event.key == pygame.K_s:
+                self.move_down = True
+            if event.key == pygame.K_a:
+                self.move_left = True
+            if event.key == pygame.K_d:
+                self.move_right = True
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                self.move_up = False
+            if event.key == pygame.K_s:
+                self.move_down = False
+            if event.key == pygame.K_a:
+                self.move_left = False
+            if event.key == pygame.K_d:
+                self.move_right = False
+
