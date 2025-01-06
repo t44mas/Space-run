@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8006e6a4-98ba-4e39-a6ff-46b3ad267ef0" name="Changes" comment="">
+    <list default="true" id="8006e6a4-98ba-4e39-a6ff-46b3ad267ef0" name="Changes" comment="fixed move of MainShip">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/main.py" afterDir="false" />
@@ -57,6 +57,19 @@
       <option name="presentableId" value="Default" />
       <updated>1736164024322</updated>
     </task>
+    <task id="LOCAL-00001" summary="fixed move of MainShip">
+      <option name="closed" value="true" />
+      <created>1736176190212</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1736176190212</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fixed move of MainShip" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed move of MainShip" />
   </component>
 </project>

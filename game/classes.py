@@ -4,9 +4,9 @@ import sys
 
 import pygame
 SHIP_SPEED = 5
+BULLET_SPEED = 8
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
-    # если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
@@ -66,3 +66,21 @@ class MainShip(pygame.sprite.Sprite):
             if event.key == pygame.K_d:
                 self.move_right = False
 
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y, screen_width, screen_height,  *group):
+        super().__init__(*group)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        original_image = load_image("Bullet.png", -1)
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 35, self.screen_height // 25))
+        rotated_image = pygame.transform.rotate(scaled_image, +90)
+        self.image = rotated_image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.speed = BULLET_SPEED
+
+    def update(self):
+        self.rect.y -= self.speed
+        if self.rect.bottom < 0:
+            self.kill()
