@@ -78,23 +78,28 @@ class EnemyShip(pygame.sprite.Sprite):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.x = x
-        self.y = y
-        self.direction_x = dir_x  # направление 1 (налево) или -1 (направо)
+        self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
         self.bullets = bullets  # группа пуль
         original_image = load_image("EnemyShip.png", -1)
         scaled_image = pygame.transform.scale(original_image, (self.screen_width // 12, self.screen_height // 12))
         rotated_image = pygame.transform.rotate(scaled_image, +180)
         self.image = rotated_image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.centerx = self.x
-        self.rect.bottom = self.y
+        self.rect.centerx = x
+        self.rect.bottom = y
         self.speed = ENEMY_SPEED
 
     def update(self):
         if pygame.sprite.spritecollideany(self, self.bullets):  # проверка если попали пулей
             self.kill()
-
+        if self.direction_x == 1:
+            if self.rect.centerx < self.screen_width - 50:
+                self.rect.centerx += self.speed
+        if self.direction_x == -1:
+            if self.rect.centerx > 50:
+                self.rect.centerx -= self.speed
+        if self.rect.centerx <= 50 or self.rect.centerx >= self.screen_width - 50:
+            self.direction_x *= -1
 
 
 class Bullet(pygame.sprite.Sprite):

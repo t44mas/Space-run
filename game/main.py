@@ -13,9 +13,9 @@ clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 player = MainShip(screen_width, screen_height, all_sprites)
-enemy1 = EnemyShip(screen_width - 100, 200, screen_width, screen_height, bullets, all_sprites)
-enemy2 = EnemyShip(screen_width // 2, 200, screen_width, screen_height, bullets, all_sprites)
-enemy3 = EnemyShip(300, 200, screen_width, screen_height, bullets, all_sprites)
+enemy1 = EnemyShip(screen_width - 100, 200, 1, screen_width, screen_height, bullets, all_sprites)
+enemy2 = EnemyShip(screen_width // 2, 200, 1, screen_width, screen_height, bullets, all_sprites)
+enemy3 = EnemyShip(300, 200, 1, screen_width, screen_height, bullets, all_sprites)
 
 running = True
 while running:
