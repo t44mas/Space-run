@@ -1,10 +1,14 @@
 # classes.py
 import os
 import sys
-
+import random
 import pygame
+
 SHIP_SPEED = 5
 BULLET_SPEED = 8
+ENEMY_SPEED = 5
+
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -17,6 +21,7 @@ def load_image(name, colorkey=None):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey)
     return image
+
 
 class MainShip(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, *group):
@@ -44,6 +49,7 @@ class MainShip(pygame.sprite.Sprite):
             self.rect.x -= self.speed
         if self.move_right:
             self.rect.x += self.speed
+
     # метод для движения при нажатии на клавиши wasd
     def handle_input(self, event):
         if event.type == pygame.KEYDOWN:
@@ -65,6 +71,31 @@ class MainShip(pygame.sprite.Sprite):
                 self.move_left = False
             if event.key == pygame.K_d:
                 self.move_right = False
+
+
+class EnemyShip(pygame.sprite.Sprite):
+    def __init__(self, x, y, dir_x, screen_width, screen_height, bullets, *group):
+        super().__init__(*group)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.x = x
+        self.y = y
+        self.direction_x = dir_x  # направление 1 (налево) или -1 (направо)
+        self.bullets = bullets  # группа пуль
+        original_image = load_image("EnemyShip.png", -1)
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 12, self.screen_height // 12))
+        rotated_image = pygame.transform.rotate(scaled_image, +180)
+        self.image = rotated_image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.x
+        self.rect.bottom = self.y
+        self.speed = ENEMY_SPEED
+
+    def update(self):
+        if pygame.sprite.spritecollideany(self, self.bullets):  # проверка если попали пулей
+            self.kill()
+
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, screen_width, screen_height,  *group):
