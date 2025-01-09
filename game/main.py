@@ -1,24 +1,17 @@
 from classes import MainShip, Bullet, EnemyShip, HP, HPBoost, SHIP_SPEED
 from classes import all_sprites, enemy_sprites, bullets_sprites, boosts_sprites
-from classes import SHIP_HEALTH
+from config import size, screen_width, screen_height, FPS
 import pygame
 
-FPS = 40
-pygame.init()
+# переменные
 pygame.font.init()
-# получаем информацию о дисплее
-info = pygame.display.Info()
-screen_width = info.current_w - 100
-screen_height = info.current_h - 100
-size = screen_width, screen_height
 my_font = pygame.font.SysFont('Comic Sans MS', 40)
-
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-player = MainShip(screen_width, screen_height, all_sprites)
-enemy1 = EnemyShip(screen_width - 100, 200, 1, screen_width, screen_height, enemy_sprites)
-enemy2 = EnemyShip(screen_width // 2, 200, -1, screen_width, screen_height, enemy_sprites)
-enemy3 = EnemyShip(300, 200, 1, screen_width, screen_height, enemy_sprites)
+player = MainShip(all_sprites)
+enemy1 = EnemyShip(screen_width - 100, 200, 1, enemy_sprites)
+enemy2 = EnemyShip(screen_width // 2, 200, -1, enemy_sprites)
+enemy3 = EnemyShip(300, 200, 1, enemy_sprites)
 
 # Интерфейс
 HP1 = HP(128, 16)
@@ -41,8 +34,7 @@ while running:
         player.handle_input(event)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                bullet = Bullet(player.rect.centerx, player.rect.top - 20, screen_width, screen_height, all_sprites,
-                                bullets_sprites)
+                player.main_ship_shooting()
             if event.key == pygame.K_LSHIFT:
                 if not speed_boost:  # проверяем прошло ли кд
                     player.speed += 5  # увеличиваем скорость и запускаем таймера
@@ -53,7 +45,7 @@ while running:
             for enemy in enemy_sprites:
                 enemy.enemy_shooting()
         if event.type == HPBOOSTSPAWN:
-            hp_boost1 = HPBoost(screen_width)
+            hp_boost1 = HPBoost()
         if event.type == SPEEDUP:  # прошло время ускорения
             player.speed = SHIP_SPEED
         if event.type == SPEEDUPCD:  # прошло кд и можно опять использовать ускорение

@@ -1,13 +1,9 @@
-# classes.py
 import os
 import sys
 import pygame
 import random
-
-SHIP_SPEED = 7
-SHIP_HEALTH = 3
-BULLET_SPEED = 8
-ENEMY_SPEED = 5
+from config import SHIP_SPEED, SHIP_HEALTH, BULLET_SPEED, ENEMY_SPEED
+from config import screen_width, screen_height
 
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
@@ -31,7 +27,7 @@ def load_image(name, colorkey=None):
 
 
 class MainShip(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, *group):
+    def __init__(self, *group):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -90,9 +86,13 @@ class MainShip(pygame.sprite.Sprite):
             if event.key == pygame.K_d:
                 self.move_right = False
 
+    def main_ship_shooting(self):
+        bullet = Bullet(self.rect.centerx, self.rect.top - 20, all_sprites,
+                        bullets_sprites)
+
 
 class EnemyShip(pygame.sprite.Sprite):
-    def __init__(self, x, y, dir_x, screen_width, screen_height, *group):
+    def __init__(self, x, y, dir_x, *group):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -119,12 +119,12 @@ class EnemyShip(pygame.sprite.Sprite):
             self.direction_x *= -1
 
     def enemy_shooting(self):
-        bul = Bullet(self.rect.centerx, self.rect.bottom + 70, self.screen_width, self.screen_height,
+        bul = Bullet(self.rect.centerx, self.rect.bottom + 70,
                      bullets_sprites, all_sprites, enemy=True)
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, screen_width, screen_height, *group, enemy=False):
+    def __init__(self, x, y, *group, enemy=False):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -161,7 +161,7 @@ class HP(pygame.sprite.Sprite):
 
 
 class HPBoost(pygame.sprite.Sprite):
-    def __init__(self, screen_width):
+    def __init__(self):
         super().__init__(boosts_sprites)
         original_image = load_image("HP_Boost.png")
         self.image = original_image

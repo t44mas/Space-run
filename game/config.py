@@ -1,0 +1,15 @@
+# Глобальные переменные
+import pygame
+
+SHIP_SPEED = 7
+SHIP_HEALTH = 3
+BULLET_SPEED = 8
+ENEMY_SPEED = 5
+FPS = 40
+
+# получаем информацию о дисплее
+pygame.init()
+info = pygame.display.Info()
+screen_width = info.current_w - 100
+screen_height = info.current_h - 100
+size = screen_width, screen_height
