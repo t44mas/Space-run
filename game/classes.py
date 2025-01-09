@@ -2,14 +2,18 @@
 import os
 import sys
 import pygame
+import random
 
-SHIP_SPEED = 5
+SHIP_SPEED = 7
+SHIP_HEALTH = 3
 BULLET_SPEED = 8
 ENEMY_SPEED = 5
+
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 bullets_sprites = pygame.sprite.Group()
+boosts_sprites = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None):
@@ -38,20 +42,31 @@ class MainShip(pygame.sprite.Sprite):
         self.rect.centerx = screen_width // 2
         self.rect.bottom = screen_height
         self.speed = SHIP_SPEED
+        self.hp = SHIP_HEALTH
         self.move_up = False
         self.move_down = False
         self.move_left = False
         self.move_right = False
 
     def update(self):
-        if self.move_up:
+        if self.move_up and self.rect.y > 0:
             self.rect.y -= self.speed
-        if self.move_down:
+        if self.move_down and self.rect.y < self.screen_height - 100:
             self.rect.y += self.speed
-        if self.move_left:
+        if self.move_left and self.rect.centerx > 50:
             self.rect.x -= self.speed
-        if self.move_right:
+        if self.move_right and self.rect.centerx < self.screen_width - 50:
             self.rect.x += self.speed
+        # проверка попадания пули
+        if pygame.sprite.spritecollideany(self, bullets_sprites):
+            b = pygame.sprite.spritecollideany(self, bullets_sprites)  # помещаем спрайт пули в переменную
+            if b.enemy:  # проверка что пуля врага чтобы не получать урон от своих же пуль
+                self.hp -= 1
+                b.kill()
+        if pygame.sprite.spritecollideany(self, boosts_sprites):
+            b = pygame.sprite.spritecollideany(self, boosts_sprites)
+            b.kill()
+            self.hp += 1
 
     # метод для движения при нажатии на клавиши wasd
     def handle_input(self, event):
@@ -131,5 +146,27 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.y -= self.speed
         else:
             self.rect.y += self.speed
-        if self.rect.bottom < 0:
+        if self.rect.bottom < 0 or self.rect.top > self.screen_height:
             self.kill()
+
+
+class HP(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(all_sprites)
+        original_image = load_image("heart2.png")
+        self.image = pygame.transform.scale(original_image, (64, 64))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.y = y
+
+
+class HPBoost(pygame.sprite.Sprite):
+    def __init__(self, screen_width):
+        super().__init__(boosts_sprites)
+        original_image = load_image("HP_Boost.png")
+        self.image = original_image
+        self.rect = self.image.get_rect()
+        self.rect.centerx = random.randint(64, screen_width)
+
+    def update(self):
+        self.rect.y += 5
