@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Make enemys.They can move and shooting">
-      <change afterPath="$PROJECT_DIR$/.idea/Space-run.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/Space1.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_01_2025_4_32_[Changes]/shelved.patch" afterDir="false" />
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,15 +32,20 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.classes.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "game",
+    "last_opened_file_path": "D:/PythonProjects/Space-run/game/data",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\PythonProjects\Space-run\game\data" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\PythonProjects\Space-run\game\data" />
     </key>
@@ -64,6 +65,28 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Space1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/game" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/game/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -118,6 +141,11 @@
       <option name="docutils_open_in_browser" value="false" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -159,7 +187,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736363011382</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел">
+      <option name="closed" value="true" />
+      <created>1736471044089</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1736471044089</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +213,7 @@
     <MESSAGE value="Добавил врагов" />
     <MESSAGE value="Добавил врагов и сделал им передвижение" />
     <MESSAGE value="Make enemys.They can move and shooting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Make enemys.They can move and shooting" />
+    <MESSAGE value="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел" />
+    <option name="LAST_COMMIT_MESSAGE" value="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел" />
   </component>
 </project>

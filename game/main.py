@@ -1,9 +1,9 @@
 from classes import MainShip, Bullet, EnemyShip, HP, HPBoost, SHIP_SPEED
 from classes import all_sprites, enemy_sprites, bullets_sprites, boosts_sprites
-from config import size, screen_width, screen_height, FPS
+from config import size, screen_width, screen_height, FPS, MUSIC_VOLUME, EFFECT_VOLUME
 import pygame
 
-# переменные
+# Переменные
 pygame.font.init()
 my_font = pygame.font.SysFont('Comic Sans MS', 40)
 screen = pygame.display.set_mode(size)
@@ -13,8 +13,16 @@ enemy1 = EnemyShip(screen_width - 100, 200, 1, enemy_sprites)
 enemy2 = EnemyShip(screen_width // 2, 200, -1, enemy_sprites)
 enemy3 = EnemyShip(300, 200, 1, enemy_sprites)
 
+# Музыка и звуки
+pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
+sound_shoot = pygame.mixer.Sound('data\\Sounds\\Shoot.wav')
+sound_shoot.set_volume(EFFECT_VOLUME)
+pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
+pygame.mixer.music.play(-1)
+
 # Интерфейс
 HP1 = HP(128, 16)
+
 # событие выстрела врагов
 ENEMYSHOOTING = pygame.USEREVENT + 1
 pygame.time.set_timer(ENEMYSHOOTING, 1000)
@@ -50,8 +58,12 @@ while running:
             if event.key == pygame.K_SPACE:
                 shooting = False
         # Выстрел
+        if event.type == SHOOTCD:
+            can_shoot = True
+
         if shooting and can_shoot:
             player.main_ship_shooting()
+            sound_shoot.play()
             pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
             can_shoot = False
         # События
@@ -64,8 +76,6 @@ while running:
             player.speed = SHIP_SPEED
         if event.type == SPEEDUPCD:  # прошло кд и можно опять использовать ускорение
             speed_boost = False
-        if event.type == SHOOTCD:
-            can_shoot = True
     # проверка на потерю хп чтобы удалить спрайты
     hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
     all_sprites.update()
