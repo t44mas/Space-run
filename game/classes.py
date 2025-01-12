@@ -170,3 +170,52 @@ class HPBoost(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += 5
+
+
+# начальный экран
+def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
+    intro_text = ["ЗАСТАВКА", "",
+                  "Начать",
+                  "рекорды",
+                  "правила"]
+    screen.fill((0, 0, 0))
+    fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
+    # ШРИФТ
+    font = pygame.font.Font(None, 30)
+
+
+    text_coord = 200
+    text_rects = []
+
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.top = text_coord
+        intro_rect.x = 100
+        screen.blit(string_rendered, intro_rect)
+        text_rects.append(intro_rect)
+        text_coord += 30
+
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return None
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for i, rect in enumerate(text_rects):
+                    if rect.collidepoint(mouse_pos):
+                        if intro_text[i] == "Начать":
+                            return "game"
+                        elif intro_text[i] == "рекорды":
+                            pass
+                        elif intro_text[i] == "правила":
+                            pass
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
