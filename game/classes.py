@@ -32,7 +32,7 @@ class MainShip(pygame.sprite.Sprite):
         self.screen_width = screen_width
         self.screen_height = screen_height
         original_image = load_image("MainShip.png", -1)
-        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 12, self.screen_height // 12))
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 18, self.screen_height // 18))
         self.image = scaled_image.convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = screen_width // 2
@@ -98,7 +98,7 @@ class EnemyShip(pygame.sprite.Sprite):
         self.screen_height = screen_height
         self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
         original_image = load_image("EnemyShip.png", -1)
-        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 12, self.screen_height // 12))
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 18, self.screen_height // 18))
         rotated_image = pygame.transform.rotate(scaled_image, +180)
         self.image = rotated_image.convert_alpha()
         self.rect = self.image.get_rect()
@@ -129,7 +129,7 @@ class Bullet(pygame.sprite.Sprite):
         self.screen_width = screen_width
         self.screen_height = screen_height
         original_image = load_image("Bullet.png", -1)
-        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 35, self.screen_height // 25))
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 42, self.screen_height // 30))
         if enemy:  # если пулю выпустил врат то она перевернута
             rotated_image = pygame.transform.rotate(scaled_image, +270)
         else:

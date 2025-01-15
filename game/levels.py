@@ -1,6 +1,6 @@
 import pygame
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP
-
+from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
 SHIP_SPEED = 5
@@ -11,11 +11,11 @@ SPEEDUP = pygame.USEREVENT + 4
 SPEEDUPCD = pygame.USEREVENT + 5
 
 # Музыка и звуки(файла нет(
-# pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
-# sound_shoot = pygame.mixer.Sound('data\\Sounds\\Shoot.wav')
-# sound_shoot.set_volume(EFFECT_VOLUME)
-# pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
+sound_shoot = pygame.mixer.Sound('data\\Sounds\\Shoot.wav')
+sound_shoot.set_volume(EFFECT_VOLUME)
+pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
+pygame.mixer.music.play(-1)
 
 # Интерфейс
 HP1 = HP(128, 16)
@@ -63,7 +63,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
 
             if shooting and can_shoot:
                 player.main_ship_shooting()
-                # sound_shoot.play()  # пока музыки нет (
+                sound_shoot.play()  # пока музыки нет (
                 pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
                 can_shoot = False
             # События
