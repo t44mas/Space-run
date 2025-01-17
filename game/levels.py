@@ -1,5 +1,5 @@
 import pygame
-from classes import MainShip, EnemyShip, Bullet, HPBoost, HP
+from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -22,8 +22,7 @@ HP1 = HP(128, 16)
 
 
 # Первый левел(он не такой должен быть это к примеру)
-def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, bullets_sprites, boosts_sprites, my_font):
-
+def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, boosts_sprites, my_font):
     running = True
     shooting = False
     can_shoot = True
@@ -35,9 +34,10 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     pygame.time.set_timer(SPEEDUPCD, 0)
 
     player = MainShip(all_sprites)
-    enemy1 = EnemyShip(screen_width - 100, 200, 1, enemy_sprites)
-    enemy2 = EnemyShip(screen_width // 2, 200, -1, enemy_sprites)
-    enemy3 = EnemyShip(300, 200, 1, enemy_sprites)
+    enemy1 = EnemyShip(300, 200, 1, enemy_sprites)
+    enemy2 = EnemyShip(900, 200, -1, enemy_sprites)
+    enemy3 = BigEnemyShip(300, 200, 1, enemy_sprites)
+    rocket = Rocket(100, 100, player, all_sprites)
 
     while running:
         for event in pygame.event.get():
@@ -84,7 +84,6 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
         boosts_sprites.update()
         screen.fill('black')
         all_sprites.draw(screen)
-        bullets_sprites.draw(screen)
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
         screen.blit(hp_count, (64, 16))

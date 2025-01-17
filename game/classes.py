@@ -2,14 +2,17 @@ import os
 import sys
 import pygame
 import random
-from config import SHIP_SPEED, SHIP_HEALTH, BULLET_SPEED, ENEMY_SPEED
+import math
+from config import SHIP_SPEED, SHIP_HEALTH, BULLET_SPEED, ENEMY_SPEED, BIG_ENEMY_SPEED, ROCKET_SPEED
 from config import screen_width, screen_height
 
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
-bullets_sprites = pygame.sprite.Group()
 boosts_sprites = pygame.sprite.Group()
+bullets_sprites = pygame.sprite.Group()
+player_bullets_sprites = pygame.sprite.Group()
+enemy_bullets_sprites = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None):
@@ -54,8 +57,8 @@ class MainShip(pygame.sprite.Sprite):
         if self.move_right and self.rect.centerx < self.screen_width - 50:
             self.rect.x += self.speed
         # проверка попадания пули
-        if pygame.sprite.spritecollideany(self, bullets_sprites):
-            b = pygame.sprite.spritecollideany(self, bullets_sprites)  # помещаем спрайт пули в переменную
+        if pygame.sprite.spritecollideany(self, enemy_bullets_sprites):
+            b = pygame.sprite.spritecollideany(self, enemy_bullets_sprites)  # помещаем спрайт пули в переменную
             if b.enemy:  # проверка что пуля врага чтобы не получать урон от своих же пуль
                 self.hp -= 1
                 b.kill()
@@ -88,7 +91,7 @@ class MainShip(pygame.sprite.Sprite):
 
     def main_ship_shooting(self):
         bullet = Bullet(self.rect.centerx, self.rect.top - 20, all_sprites,
-                        bullets_sprites)
+                        player_bullets_sprites)
 
 
 class EnemyShip(pygame.sprite.Sprite):
@@ -107,7 +110,9 @@ class EnemyShip(pygame.sprite.Sprite):
         self.speed = ENEMY_SPEED
 
     def update(self):
-        if pygame.sprite.spritecollideany(self, bullets_sprites):  # проверка если попали пулей
+        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
+        if collided_bullet:  # проверка если попали пулей
+            collided_bullet.kill()
             self.kill()
         if self.direction_x == 1:
             if self.rect.centerx < self.screen_width - 50:
@@ -119,17 +124,105 @@ class EnemyShip(pygame.sprite.Sprite):
             self.direction_x *= -1
 
     def enemy_shooting(self):
-        bul = Bullet(self.rect.centerx, self.rect.bottom + 70,
-                     bullets_sprites, all_sprites, enemy=True)
+        bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 35,
+                     enemy_bullets_sprites, all_sprites, enemy=True)
+
+
+class BigEnemyShip(pygame.sprite.Sprite):
+    def __init__(self, x, y, dir_x, *group):
+        super().__init__(*group)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
+        self.direction_y = True
+        self.hp = 3
+        original_image = load_image("BigEnemyShip.png", -1)
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 10, self.screen_height // 10))
+        rotated_image = pygame.transform.rotate(scaled_image, +180)
+        self.image = rotated_image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.speed = BIG_ENEMY_SPEED
+
+    def update(self):
+        if self.hp == 0:
+            self.kill()
+        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
+        if collided_bullet:  # проверка если попали пулей
+            self.hp -= 1
+            collided_bullet.kill()
+        rand_speed = random.random()
+        if self.direction_y:
+            self.rect.bottom += self.speed
+        if rand_speed < 0.3:
+            if self.direction_x == 1:
+                if self.rect.centerx < self.screen_width - 50:
+                    self.rect.centerx += self.speed * 3
+            if self.direction_x == -1:
+                if self.rect.centerx > 50:
+                    self.rect.centerx -= self.speed * 3
+            if self.rect.centerx <= 50 or self.rect.centerx >= self.screen_width - 50:
+                self.direction_x *= -1
+            rand_speed = random.random()
+            if rand_speed < 0.1:
+                self.direction_x = -self.direction_x
+
+    def enemy_shooting(self):
+        bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 30,
+                     enemy_bullets_sprites, all_sprites, enemy=True, size=(25, 15))
+
+
+class Rocket(pygame.sprite.Sprite):
+    def __init__(self, x, y, player, *group):
+        super().__init__(*group)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        image = load_image("Rocket.jpg", -1)
+        scaled_image = pygame.transform.scale(image, (self.screen_width // 15, self.screen_height // 15))
+        self.original_image = pygame.transform.rotate(scaled_image, 0).convert_alpha()
+        self.image = self.original_image
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.speed = ROCKET_SPEED
+        self.player = player
+        self.angle = 0  # угол для разворота изображения
+
+    def update(self):
+        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
+        if collided_bullet:  # проверка если попали пулей
+            collided_bullet.kill()
+            self.kill()
+        # расчет направления
+        dx = self.player.rect.centerx - self.rect.centerx
+        dy = self.player.rect.centery - self.rect.centery
+
+        # расчет длины вектора
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+        if distance > 0:
+            normalized_x = dx / distance
+            normalized_y = dy / distance
+            # угол в радианах
+            angle_radians = math.atan2(dy, dx)
+            # градусы
+            self.angle = math.degrees(angle_radians)
+            # поворот в сторону игрока
+            self.image = pygame.transform.rotate(self.original_image, -self.angle - 90)
+            self.rect = self.image.get_rect(center=self.rect.center)  # Обновление прямоугольника
+            # движения игрока в его сторону
+            self.rect.x += normalized_x * self.speed
+            self.rect.y += normalized_y * self.speed
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, *group, enemy=False):
+    def __init__(self, x, y, *group, enemy=False, size=(42, 30)):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
         original_image = load_image("Bullet.png", -1)
-        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 42, self.screen_height // 30))
+        scaled_image = pygame.transform.scale(original_image,
+                                              (self.screen_width // size[0], self.screen_height // size[1]))
         if enemy:  # если пулю выпустил врат то она перевернута
             rotated_image = pygame.transform.rotate(scaled_image, +270)
         else:
@@ -185,7 +278,6 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     # ШРИФТ
     font = pygame.font.Font(None, 30)
 
-
     text_coord = 200
     text_rects = []
 
@@ -197,7 +289,6 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
         screen.blit(string_rendered, intro_rect)
         text_rects.append(intro_rect)
         text_coord += 30
-
 
     while True:
         for event in pygame.event.get():
@@ -217,5 +308,3 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
 
         pygame.display.flip()
         clock.tick(FPS)
-
-
