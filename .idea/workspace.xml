@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел">
-      <change afterPath="$PROJECT_DIR$/game/data/Sounds/BackSound.ogg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/data/Sounds/Shoot.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Space1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Space1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/data/Bullet.png" beforeDir="false" afterPath="$PROJECT_DIR$/game/data/Bullet.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

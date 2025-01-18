@@ -8,6 +8,7 @@ from config import screen_width, screen_height
 
 # Группы спрайтов
 all_sprites = pygame.sprite.Group()
+player_sprite = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 boosts_sprites = pygame.sprite.Group()
 bullets_sprites = pygame.sprite.Group()
@@ -185,15 +186,30 @@ class Rocket(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
+
+        self.boom_frames = []  # кадры взрыва
+        self.boom_rect = None
+        self.cut_sheet(load_image('boom.png'), 5, 4)
+        self.cur_boom_frame = 0
+        self.is_booming = False  # флаг для взрыва
+
         self.speed = ROCKET_SPEED
         self.player = player
         self.angle = 0  # угол для разворота изображения
 
     def update(self):
+        if self.is_booming:  # анимация взрыва
+            self.boom()
+            return
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
-        if collided_bullet:  # проверка если попали пулей
-            collided_bullet.kill()
-            self.kill()
+        collided_player = pygame.sprite.spritecollideany(self, player_sprite)
+        if collided_bullet or collided_player:
+            if collided_bullet:
+                collided_bullet.kill()
+            self.is_booming = True  # запускаем флаг для анимации взрыва
+            self.image = self.boom_frames[0]  # отрисовываем 1 кадр
+            self.rect = self.image.get_rect(center=self.rect.center)
+            return
         # расчет направления
         dx = self.player.rect.centerx - self.rect.centerx
         dy = self.player.rect.centery - self.rect.centery
@@ -213,6 +229,24 @@ class Rocket(pygame.sprite.Sprite):
             # движения игрока в его сторону
             self.rect.x += normalized_x * self.speed
             self.rect.y += normalized_y * self.speed
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.boom_rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                     sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.boom_rect.w * i, self.boom_rect.h * j)
+                self.boom_frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def boom(self):
+        # Анимация взрыва
+        self.cur_boom_frame = (self.cur_boom_frame + 1)
+        if self.cur_boom_frame < len(self.boom_frames):
+            self.image = self.boom_frames[self.cur_boom_frame]
+            self.rect = self.image.get_rect(center=self.rect.center)
+        else:
+            self.kill()  # уничтожаем ракету
 
 
 class Bullet(pygame.sprite.Sprite):

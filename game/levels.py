@@ -1,5 +1,5 @@
 import pygame
-from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket
+from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -33,7 +33,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     pygame.time.set_timer(SPEEDUP, 0)
     pygame.time.set_timer(SPEEDUPCD, 0)
 
-    player = MainShip(all_sprites)
+    player = MainShip(all_sprites, player_sprite)
     enemy1 = EnemyShip(300, 200, 1, enemy_sprites)
     enemy2 = EnemyShip(900, 200, -1, enemy_sprites)
     enemy3 = BigEnemyShip(300, 200, 1, enemy_sprites)
