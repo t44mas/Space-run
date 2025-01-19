@@ -1,5 +1,5 @@
-import pygame
-from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite
+import pygame, random
+from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -9,11 +9,16 @@ ENEMYSHOOTING = pygame.USEREVENT + 2
 HPBOOSTSPAWN = pygame.USEREVENT + 3
 SPEEDUP = pygame.USEREVENT + 4
 SPEEDUPCD = pygame.USEREVENT + 5
+ALARM = pygame.USEREVENT + 6
+LASERSPAWN = pygame.USEREVENT + 7
+LASERDELETE = pygame.USEREVENT + 8
 
-# Музыка и звуки(файла нет(
+# Музыка и звуки
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
 sound_shoot = pygame.mixer.Sound('data\\Sounds\\Shoot.wav')
+alarm_sound = pygame.mixer.Sound('data\\Sounds\\alarm1.wav')
 sound_shoot.set_volume(EFFECT_VOLUME)
+alarm_sound.set_volume(EFFECT_VOLUME / 3)
 pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 
@@ -32,6 +37,11 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     pygame.time.set_timer(HPBOOSTSPAWN, 15000)
     pygame.time.set_timer(SPEEDUP, 0)
     pygame.time.set_timer(SPEEDUPCD, 0)
+    alarm_time = random.randint(10000, 20000) # спавнит предупреждение о лазере от 10 до 20 сек
+    pygame.time.set_timer(ALARM, alarm_time)
+    pygame.time.set_timer(LASERSPAWN, alarm_time + 2000)
+    pygame.time.set_timer(LASERDELETE, alarm_time + 6000)
+    laser_time_change = False
 
     player = MainShip(all_sprites, player_sprite)
     enemy1 = EnemyShip(300, 200, 1, enemy_sprites)
@@ -63,7 +73,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
 
             if shooting and can_shoot:
                 player.main_ship_shooting()
-                sound_shoot.play()  # пока музыки нет (
+                sound_shoot.play()
                 pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
                 can_shoot = False
             # События
@@ -76,6 +86,23 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                 player.speed = SHIP_SPEED
             if event.type == SPEEDUPCD:  # прошло кд и можно опять использовать ускорение
                 speed_boost = False
+            if laser_time_change:
+                alarm_time = random.randint(10000, 20000)  # спавнит предупреждение о лазере от 10 до 20 сек
+                pygame.time.set_timer(ALARM, alarm_time)
+                pygame.time.set_timer(LASERSPAWN, alarm_time + 2000)
+                pygame.time.set_timer(LASERDELETE, alarm_time + 6000)
+                laser_time_change = False
+            if event.type == ALARM:
+                alarm_sound.play()
+                laser_y = random.randint(32, screen_height - 32)  # случайная y для лазера
+                alarm = Alarm(laser_y + 32)
+            if event.type == LASERSPAWN:
+                alarm.kill()
+                laser1 = Laser(laser_y)
+            if event.type == LASERDELETE:
+                laser1.kill()
+                laser_time_change = True
+
 
         # проверка на потерю хп чтобы удалить спрайты
         hp_count = my_font.render(str(player.hp), False, (255, 255, 255))

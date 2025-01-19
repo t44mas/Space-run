@@ -209,6 +209,8 @@ class Rocket(pygame.sprite.Sprite):
             self.is_booming = True  # запускаем флаг для анимации взрыва
             self.image = self.boom_frames[0]  # отрисовываем 1 кадр
             self.rect = self.image.get_rect(center=self.rect.center)
+            if collided_player:
+                collided_player.hp -= 1
             return
         # расчет направления
         dx = self.player.rect.centerx - self.rect.centerx
@@ -247,6 +249,32 @@ class Rocket(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center=self.rect.center)
         else:
             self.kill()  # уничтожаем ракету
+
+
+class Laser(pygame.sprite.Sprite):
+    def __init__(self, y):
+        super().__init__(all_sprites)
+        original_image = load_image("laser.png")
+        self.image = pygame.transform.scale(original_image, (screen_width, screen_height // 10))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = screen_width // 2
+        self.rect.y = y
+
+    def update(self):
+        collided_player = pygame.sprite.spritecollideany(self, player_sprite)
+        if collided_player:
+            collided_player.hp -= 1
+            self.kill()
+
+
+class Alarm(pygame.sprite.Sprite):
+    def __init__(self, y):
+        super().__init__(all_sprites)
+        original_image = load_image("alarm.png")
+        self.image = pygame.transform.scale(original_image, (64, 64))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = 64
+        self.rect.y = y
 
 
 class Bullet(pygame.sprite.Sprite):
