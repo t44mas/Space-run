@@ -17,8 +17,10 @@ LASERDELETE = pygame.USEREVENT + 8
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
 sound_shoot = pygame.mixer.Sound('data\\Sounds\\Shoot.wav')
 alarm_sound = pygame.mixer.Sound('data\\Sounds\\alarm1.wav')
+laser_sound = pygame.mixer.Sound('data\\Sounds\\laser.wav')
 sound_shoot.set_volume(EFFECT_VOLUME)
 alarm_sound.set_volume(EFFECT_VOLUME / 3)
+laser_sound.set_volume(0.5)
 pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 
@@ -98,11 +100,11 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                 alarm = Alarm(laser_y + 32)
             if event.type == LASERSPAWN:
                 alarm.kill()
+                laser_sound.play()
                 laser1 = Laser(laser_y)
             if event.type == LASERDELETE:
                 laser1.kill()
                 laser_time_change = True
-
 
         # проверка на потерю хп чтобы удалить спрайты
         hp_count = my_font.render(str(player.hp), False, (255, 255, 255))

@@ -259,12 +259,13 @@ class Laser(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = screen_width // 2
         self.rect.y = y
+        self.damaged = False
 
     def update(self):
         collided_player = pygame.sprite.spritecollideany(self, player_sprite)
-        if collided_player:
+        if collided_player and not self.damaged:
             collided_player.hp -= 1
-            self.kill()
+            self.damaged = True
 
 
 class Alarm(pygame.sprite.Sprite):

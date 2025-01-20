@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="НАКОНЕЦ ДОБАВИЛ МУЗЫКУ и чуть уменьшил размеры">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_01_2025_4_32_[Changes]/shelved.patch" beforeDir="false" />
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Добавил лазер. и урон от бомб">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
@@ -132,7 +131,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736471044089</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Добавил лазер. и урон от бомб">
+      <option name="closed" value="true" />
+      <created>1737286385338</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1737286385338</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -151,6 +158,7 @@
     <MESSAGE value="Добавил врагов и сделал им передвижение" />
     <MESSAGE value="Make enemys.They can move and shooting" />
     <MESSAGE value="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел" />
-    <option name="LAST_COMMIT_MESSAGE" value="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел" />
+    <MESSAGE value="Добавил лазер. и урон от бомб" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавил лазер. и урон от бомб" />
   </component>
 </project>
