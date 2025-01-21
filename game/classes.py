@@ -96,7 +96,7 @@ class MainShip(pygame.sprite.Sprite):
 
 
 class EnemyShip(pygame.sprite.Sprite):
-    def __init__(self, x, y, dir_x, *group):
+    def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=False):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -108,7 +108,10 @@ class EnemyShip(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
+        self.attack_speed = attack_speed
+        self.attack_count = 1
         self.speed = ENEMY_SPEED
+        self.change_dir = change_dir
 
     def update(self):
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
@@ -125,12 +128,17 @@ class EnemyShip(pygame.sprite.Sprite):
             self.direction_x *= -1
 
     def enemy_shooting(self):
-        bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 35,
-                     enemy_bullets_sprites, all_sprites, enemy=True)
+        # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
+        if self.attack_count == self.attack_speed:
+            bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 35,
+                         enemy_bullets_sprites, all_sprites, enemy=True)
+            self.attack_count = 1
+        else:
+            self.attack_count += 1
 
 
 class BigEnemyShip(pygame.sprite.Sprite):
-    def __init__(self, x, y, dir_x, *group):
+    def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=False):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -144,7 +152,10 @@ class BigEnemyShip(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
+        self.attack_speed = attack_speed
+        self.attack_count = 1
         self.speed = BIG_ENEMY_SPEED
+        self.change_dir = change_dir
 
     def update(self):
         if self.hp == 0:
@@ -170,8 +181,13 @@ class BigEnemyShip(pygame.sprite.Sprite):
                 self.direction_x = -self.direction_x
 
     def enemy_shooting(self):
-        bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 30,
-                     enemy_bullets_sprites, all_sprites, enemy=True, size=(25, 15))
+        # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
+        if self.attack_count == self.attack_speed:
+            bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 30,
+                         enemy_bullets_sprites, all_sprites, enemy=True, size=(25, 15))
+            self.attack_count = 1
+        else:
+            self.attack_count += 1
 
 
 class Rocket(pygame.sprite.Sprite):
@@ -276,6 +292,51 @@ class Alarm(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = 64
         self.rect.y = y
+
+
+class SmallEnemy(pygame.sprite.Sprite):
+    def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=True):
+        super().__init__(*group)
+        self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
+        original_image = load_image("smallShip.png", -1)
+        scaled_image = pygame.transform.scale(original_image, (screen_width // 36, screen_height // 28))
+        rotated_image = pygame.transform.rotate(scaled_image, +180)
+        self.image = rotated_image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.change_dir = change_dir
+        self.attack_speed = attack_speed
+        self.attack_count = 1
+        self.speed = ENEMY_SPEED * 2
+
+    def update(self):
+        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
+        if collided_bullet:  # проверка если попали пулей
+            collided_bullet.kill()
+            self.kill()
+        if self.direction_x == 1:
+            if self.rect.centerx < screen_width - 50:
+                self.rect.centerx += self.speed
+        if self.direction_x == -1:
+            if self.rect.centerx > 50:
+                self.rect.centerx -= self.speed
+        if self.rect.centerx <= 50 or self.rect.centerx >= screen_width - 50:
+            self.direction_x *= -1
+
+    def enemy_shooting(self):
+        # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
+        if self.attack_count == self.attack_speed:  # если скорость аттаки 1 то стреляем сразу
+            bul = Bullet(self.rect.centerx, self.rect.bottom + screen_width // 35,
+                         enemy_bullets_sprites, all_sprites, enemy=True)
+            self.attack_count = 1
+        else:
+            self.attack_count += 1
+
+    def changeDir(self):
+        a = random.randint(0, 4)
+        if a == 1:
+            self.direction_x *= -1
 
 
 class Bullet(pygame.sprite.Sprite):

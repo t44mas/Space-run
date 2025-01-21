@@ -1,5 +1,6 @@
 import pygame, random
-from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm
+from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
+    SmallEnemy
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -12,6 +13,7 @@ SPEEDUPCD = pygame.USEREVENT + 5
 ALARM = pygame.USEREVENT + 6
 LASERSPAWN = pygame.USEREVENT + 7
 LASERDELETE = pygame.USEREVENT + 8
+CHANGEENEMYDIR = pygame.USEREVENT + 9 # событие смены направления мальнького кораблся
 
 # Музыка и звуки
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
@@ -35,21 +37,23 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     can_shoot = True
     speed_boost = False
 
-    pygame.time.set_timer(ENEMYSHOOTING, 1000)
+    pygame.time.set_timer(ENEMYSHOOTING, 500)
+    pygame.time.set_timer(CHANGEENEMYDIR, 500)
     pygame.time.set_timer(HPBOOSTSPAWN, 15000)
     pygame.time.set_timer(SPEEDUP, 0)
     pygame.time.set_timer(SPEEDUPCD, 0)
-    alarm_time = random.randint(10000, 20000) # спавнит предупреждение о лазере от 10 до 20 сек
+    alarm_time = random.randint(10000, 20000)  # спавнит предупреждение о лазере от 10 до 20 сек
     pygame.time.set_timer(ALARM, alarm_time)
     pygame.time.set_timer(LASERSPAWN, alarm_time + 2000)
     pygame.time.set_timer(LASERDELETE, alarm_time + 6000)
     laser_time_change = False
 
     player = MainShip(all_sprites, player_sprite)
-    enemy1 = EnemyShip(300, 200, 1, enemy_sprites)
-    enemy2 = EnemyShip(900, 200, -1, enemy_sprites)
-    enemy3 = BigEnemyShip(300, 200, 1, enemy_sprites)
+    enemy1 = EnemyShip(300, 200, 1, 2, enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
+    enemy2 = EnemyShip(900, 200, -1, 2, enemy_sprites)  # также есть скрытый параметр change_dir=False
+    enemy3 = BigEnemyShip(300, 200, 1, 3, enemy_sprites)
     rocket = Rocket(100, 100, player, all_sprites)
+    small = SmallEnemy(200, 200, 1, 1, enemy_sprites)
 
     while running:
         for event in pygame.event.get():
@@ -82,6 +86,10 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
             if event.type == ENEMYSHOOTING:
                 for enemy in enemy_sprites:
                     enemy.enemy_shooting()
+            if event.type == CHANGEENEMYDIR:  # меняет направление
+                for enemy in enemy_sprites:
+                    if enemy.change_dir:
+                        enemy.changeDir()
             if event.type == HPBOOSTSPAWN:
                 hp_boost1 = HPBoost()
             if event.type == SPEEDUP:  # прошло время ускорения
