@@ -15,6 +15,7 @@ LASERSPAWN = pygame.USEREVENT + 7
 LASERDELETE = pygame.USEREVENT + 8
 CHANGEENEMYDIR = pygame.USEREVENT + 9 # событие смены направления мальнького кораблся
 
+
 # Музыка и звуки
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
 sound_shoot = pygame.mixer.Sound('data\\Sounds\\Shoot.wav')
