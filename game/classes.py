@@ -25,7 +25,8 @@ def load_image(name, colorkey=None):
     if colorkey is not None:
         image = image.convert()
         if colorkey == -1:
-            colorkey = image.get_at((0, 0))
+            colorkey = image.get_at((40, 0))
+        print(f'{name} == {colorkey}')
         image.set_colorkey(colorkey)
     return image
 
@@ -195,9 +196,11 @@ class Rocket(pygame.sprite.Sprite):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
-        image = load_image("Rocket.jpg", -1)
-        scaled_image = pygame.transform.scale(image, (self.screen_width // 15, self.screen_height // 15))
-        self.original_image = pygame.transform.rotate(scaled_image, 0).convert_alpha()
+        image = load_image("Rocket.jpg", -1)  # Загружаем изображение
+        scaled_image = pygame.transform.scale(image,
+                                              (self.screen_width // 15, self.screen_height // 15))
+        self.original_image = pygame.transform.rotate(scaled_image,
+                                                      0).convert_alpha()
         self.image = self.original_image
         self.rect = self.image.get_rect()
         self.rect.centerx = x
@@ -205,7 +208,7 @@ class Rocket(pygame.sprite.Sprite):
 
         self.boom_frames = []  # кадры взрыва
         self.boom_rect = None
-        self.cut_sheet(load_image('boom.png'), 5, 4)
+        self.cut_sheet(load_image('boom.png', -1), 5, 5)
         self.cur_boom_frame = 0
         self.is_booming = False  # флаг для взрыва
 
@@ -213,12 +216,20 @@ class Rocket(pygame.sprite.Sprite):
         self.player = player
         self.angle = 0  # угол для разворота изображения
 
+        self.frame_delay = 2  # Задержка между кадрами
+        self.frame_counter = 0  # Счетчик задержки
+
+        self.active = True
+
     def update(self):
-        if self.is_booming:  # анимация взрыва
+        if not self.active:
+            return
+        if self.is_booming:
             self.boom()
             return
-        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
-        collided_player = pygame.sprite.spritecollideany(self, player_sprite)
+
+        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)  # Проверка столкновения с пулей
+        collided_player = pygame.sprite.spritecollideany(self, player_sprite)  # Проверка столкновения с игроком
         if collided_bullet or collided_player:
             if collided_bullet:
                 collided_bullet.kill()
@@ -255,16 +266,21 @@ class Rocket(pygame.sprite.Sprite):
             for i in range(columns):
                 frame_location = (self.boom_rect.w * i, self.boom_rect.h * j)
                 self.boom_frames.append(sheet.subsurface(pygame.Rect(
-                    frame_location, self.rect.size)))
+                    frame_location, self.boom_rect.size)))
 
     def boom(self):
         # Анимация взрыва
-        self.cur_boom_frame = (self.cur_boom_frame + 1)
-        if self.cur_boom_frame < len(self.boom_frames):
-            self.image = self.boom_frames[self.cur_boom_frame]
-            self.rect = self.image.get_rect(center=self.rect.center)
-        else:
-            self.kill()  # уничтожаем ракету
+        self.frame_counter += 1
+        if self.frame_counter >= self.frame_delay:
+            self.cur_boom_frame += 1
+            self.frame_counter = 0
+            if self.cur_boom_frame < len(self.boom_frames):
+                self.image = self.boom_frames[self.cur_boom_frame]
+                self.rect = self.image.get_rect(center=self.rect.center)
+            else:
+                self.kill()
+
+
 
 
 class Laser(pygame.sprite.Sprite):
