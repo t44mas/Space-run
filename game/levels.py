@@ -24,6 +24,7 @@ laser_sound = pygame.mixer.Sound('data\\Sounds\\laser.wav')
 sound_shoot.set_volume(EFFECT_VOLUME)
 alarm_sound.set_volume(EFFECT_VOLUME / 3)
 laser_sound.set_volume(0.5)
+
 pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 

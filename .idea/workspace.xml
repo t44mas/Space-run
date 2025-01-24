@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="чуть улучшил лазер + добавил звук(сегодня займусь маленьким кораблем)">
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Теперь лазер дамажит по кд, а не 1 раз">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
@@ -147,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737371928599</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Теперь лазер дамажит по кд, а не 1 раз">
+      <option name="closed" value="true" />
+      <created>1737744001522</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1737744001522</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -168,6 +176,7 @@
     <MESSAGE value="Переделал стрельбу. Теперь можно стрелять просто зажав кнопку и добавил кд на выстрел" />
     <MESSAGE value="Добавил лазер. и урон от бомб" />
     <MESSAGE value="чуть улучшил лазер + добавил звук(сегодня займусь маленьким кораблем)" />
-    <option name="LAST_COMMIT_MESSAGE" value="чуть улучшил лазер + добавил звук(сегодня займусь маленьким кораблем)" />
+    <MESSAGE value="Теперь лазер дамажит по кд, а не 1 раз" />
+    <option name="LAST_COMMIT_MESSAGE" value="Теперь лазер дамажит по кд, а не 1 раз" />
   </component>
 </project>
