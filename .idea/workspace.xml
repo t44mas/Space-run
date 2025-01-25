@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Теперь лазер дамажит по кд, а не 1 раз">
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="сделал взрыв после убийства врагов и добавил ему звук">
+      <change afterPath="$PROJECT_DIR$/game/data/LoseBackground.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +157,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737744001522</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="сделал взрыв после убийства врагов и добавил ему звук">
+      <option name="closed" value="true" />
+      <created>1737748794858</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1737748794858</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +187,7 @@
     <MESSAGE value="Добавил лазер. и урон от бомб" />
     <MESSAGE value="чуть улучшил лазер + добавил звук(сегодня займусь маленьким кораблем)" />
     <MESSAGE value="Теперь лазер дамажит по кд, а не 1 раз" />
-    <option name="LAST_COMMIT_MESSAGE" value="Теперь лазер дамажит по кд, а не 1 раз" />
+    <MESSAGE value="сделал взрыв после убийства врагов и добавил ему звук" />
+    <option name="LAST_COMMIT_MESSAGE" value="сделал взрыв после убийства врагов и добавил ему звук" />
   </component>
 </project>

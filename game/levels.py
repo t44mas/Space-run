@@ -1,6 +1,7 @@
-import pygame, random
+import pygame
+import  random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
-    SmallEnemy
+    SmallEnemy, load_image
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -28,9 +29,90 @@ laser_sound.set_volume(0.5)
 pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 
-# Интерфейс
-HP1 = HP(128, 16)
 
+# начальный экран
+def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
+    intro_text = ["ЗАСТАВКА", "",
+                  "Начать",
+                  "рекорды",
+                  "правила"]
+    screen.fill((0, 0, 0))
+    fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
+    # ШРИФТ
+    font = pygame.font.Font(None, 30)
+
+    text_coord = 200
+    text_rects = []
+
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.top = text_coord
+        intro_rect.x = 100
+        screen.blit(string_rendered, intro_rect)
+        text_rects.append(intro_rect)
+        text_coord += 30
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return None
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for i, rect in enumerate(text_rects):
+                    if rect.collidepoint(mouse_pos):
+                        if intro_text[i] == "Начать":
+                            return "game"
+                        elif intro_text[i] == "рекорды":
+                            pass
+                        elif intro_text[i] == "правила":
+                            pass
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+def lose_screen(screen,clock,FPS,WIDTH,HEIGHT):
+    intro_text = ["RETRY",
+                  "",
+                  "RECORDS"]
+    screen.fill((0, 0, 0))
+    fon = pygame.transform.scale(load_image('LoseBackground.png'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
+    # ШРИФТ
+    font = pygame.font.Font(None, 40)
+
+    text_coord = HEIGHT // 1.5
+    text_rects = []
+
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.top = text_coord
+        intro_rect.x = WIDTH // 2 - 50
+        screen.blit(string_rendered, intro_rect)
+        text_rects.append(intro_rect)
+        text_coord += 30
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return "exit"
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for i, rect in enumerate(text_rects):
+                    if rect.collidepoint(mouse_pos):
+                        if intro_text[i] == "RETRY":
+                            return "game"
+                        elif intro_text[i] == "RECORDS":
+                            pass
+
+        pygame.display.flip()
+        clock.tick(FPS)
 
 # Первый левел(он не такой должен быть это к примеру)
 def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, boosts_sprites, my_font):
@@ -50,6 +132,9 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     pygame.time.set_timer(LASERDELETE, alarm_time + 6000)
     laser_time_change = False
 
+    # Интерфейс
+    HP1 = HP(128, 16)
+
     player = MainShip(all_sprites, player_sprite)
     enemy1 = EnemyShip(300, 200, 1, 2, enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
     enemy2 = EnemyShip(900, 200, -1, 2, enemy_sprites)  # также есть скрытый параметр change_dir=False
@@ -61,6 +146,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                return "exit"
             player.handle_input(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -78,6 +164,12 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
             # Выстрел
             if event.type == SHOOTCD:
                 can_shoot = True
+
+            if player.hp <= 0:
+                for x in all_sprites, enemy_sprites, boosts_sprites:
+                    for y in x:
+                        y.kill()
+                return "lose"
 
             if shooting and can_shoot:
                 player.main_ship_shooting()

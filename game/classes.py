@@ -234,8 +234,8 @@ class Rocket(pygame.sprite.Sprite):
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)  # Проверка столкновения с пулей
         collided_player = pygame.sprite.spritecollideany(self, player_sprite)  # Проверка столкновения с игроком
         if collided_bullet or collided_player:
+            boom_sound.play()
             if collided_bullet:
-                boom_sound.play()
                 collided_bullet.kill()
             self.is_booming = True  # запускаем флаг для анимации взрыва
             self.image = self.boom_frames[0]  # отрисовываем 1 кадр
@@ -293,7 +293,7 @@ class Laser(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = screen_width // 2
         self.rect.y = y
-        self.cd = 600
+        self.cd = 800
         self.last = pygame.time.get_ticks()
 
     def update(self):
@@ -451,46 +451,3 @@ class Boom(pygame.sprite.Sprite):
                 self.kill()
 
 
-# начальный экран
-def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
-    intro_text = ["ЗАСТАВКА", "",
-                  "Начать",
-                  "рекорды",
-                  "правила"]
-    screen.fill((0, 0, 0))
-    fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
-
-    # ШРИФТ
-    font = pygame.font.Font(None, 30)
-
-    text_coord = 200
-    text_rects = []
-
-    for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        intro_rect.top = text_coord
-        intro_rect.x = 100
-        screen.blit(string_rendered, intro_rect)
-        text_rects.append(intro_rect)
-        text_coord += 30
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return None
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos
-                for i, rect in enumerate(text_rects):
-                    if rect.collidepoint(mouse_pos):
-                        if intro_text[i] == "Начать":
-                            return "game"
-                        elif intro_text[i] == "рекорды":
-                            pass
-                        elif intro_text[i] == "правила":
-                            pass
-
-        pygame.display.flip()
-        clock.tick(FPS)
