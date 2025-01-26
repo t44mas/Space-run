@@ -96,7 +96,6 @@ class MainShip(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.top - 20, all_sprites,
                         player_bullets_sprites)
 
-
 class EnemyShip(pygame.sprite.Sprite):
     def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=False):
         super().__init__(*group)
@@ -183,7 +182,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
             rand_speed = random.random()
             if rand_speed < 0.1:
                 self.direction_x = -self.direction_x
-
+        self.check_out_of_bounds()
     def enemy_shooting(self):
         # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
         if self.attack_count == self.attack_speed:
@@ -193,6 +192,9 @@ class BigEnemyShip(pygame.sprite.Sprite):
         else:
             self.attack_count += 1
 
+    def check_out_of_bounds(self):
+        if self.rect.top > self.screen_height:
+            self.rect.bottom = 0  # переносим врага в верх
 
 class Rocket(pygame.sprite.Sprite):
     def __init__(self, x, y, player, *group):
@@ -209,37 +211,21 @@ class Rocket(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = y
 
-        self.boom_frames = []  # кадры взрыва
-        self.boom_rect = None
-        self.cut_sheet(load_image('boom.png', -1), 5, 5)
-        self.cur_boom_frame = 0
-        self.is_booming = False  # флаг для взрыва
+
 
         self.speed = ROCKET_SPEED
         self.player = player
         self.angle = 0  # угол для разворота изображения
 
-        self.frame_delay = 2  # Задержка между кадрами
-        self.frame_counter = 0  # Счетчик задержки
-
-        self.active = True
-
     def update(self):
-        if not self.active:
-            return
-        if self.is_booming:
-            self.boom()
-            return
-
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)  # Проверка столкновения с пулей
         collided_player = pygame.sprite.spritecollideany(self, player_sprite)  # Проверка столкновения с игроком
         if collided_bullet or collided_player:
             boom_sound.play()
             if collided_bullet:
                 collided_bullet.kill()
-            self.is_booming = True  # запускаем флаг для анимации взрыва
-            self.image = self.boom_frames[0]  # отрисовываем 1 кадр
-            self.rect = self.image.get_rect(center=self.rect.center)
+                Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
+                self.kill()
             if collided_player:
                 collided_player.hp -= 1
             return
@@ -262,27 +248,6 @@ class Rocket(pygame.sprite.Sprite):
             # движения игрока в его сторону
             self.rect.x += normalized_x * self.speed
             self.rect.y += normalized_y * self.speed
-
-    def cut_sheet(self, sheet, columns, rows):
-        self.boom_rect = pygame.Rect(0, 0, sheet.get_width() // columns,
-                                     sheet.get_height() // rows)
-        for j in range(rows):
-            for i in range(columns):
-                frame_location = (self.boom_rect.w * i, self.boom_rect.h * j)
-                self.boom_frames.append(sheet.subsurface(pygame.Rect(
-                    frame_location, self.boom_rect.size)))
-
-    def boom(self):
-        # Анимация взрыва
-        self.frame_counter += 1
-        if self.frame_counter >= self.frame_delay:
-            self.cur_boom_frame += 1
-            self.frame_counter = 0
-            if self.cur_boom_frame < len(self.boom_frames):
-                self.image = self.boom_frames[self.cur_boom_frame]
-                self.rect = self.image.get_rect(center=self.rect.center)
-            else:
-                self.kill()
 
 
 class Laser(pygame.sprite.Sprite):
@@ -411,13 +376,13 @@ class HPBoost(pygame.sprite.Sprite):
 
 
 class Boom(pygame.sprite.Sprite):
-    def __init__(self, start_image, start_rect, *group, size=1):
+    def __init__(self, start_image, start_rect, *group, size=1, image='EnemyExplosion.png', columns=6, rows=1):
         super().__init__(*group)
         self.image = start_image
         self.rect = start_rect
         self.boom_frames = []  # кадры взрыва
         self.boom_rect = None
-        self.cut_sheet(load_image('EnemyExplosion.png', -1), 6, 1)
+        self.cut_sheet(load_image(image, -1), columns, rows)
         self.cur_boom_frame = 0
         self.frame_delay = 2  # Задержка между кадрами
         self.frame_counter = 0  # Счетчик задержки
