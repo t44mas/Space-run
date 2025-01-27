@@ -45,6 +45,7 @@ class MainShip(pygame.sprite.Sprite):
         self.rect.bottom = screen_height
         self.speed = SHIP_SPEED
         self.hp = SHIP_HEALTH
+        self.points = 0
         self.move_up = False
         self.move_down = False
         self.move_left = False
@@ -97,7 +98,7 @@ class MainShip(pygame.sprite.Sprite):
                         player_bullets_sprites)
 
 class EnemyShip(pygame.sprite.Sprite):
-    def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=False):
+    def __init__(self, x, y, dir_x, attack_speed, player, *group, change_dir=False):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -113,11 +114,12 @@ class EnemyShip(pygame.sprite.Sprite):
         self.attack_count = 1
         self.speed = ENEMY_SPEED
         self.change_dir = change_dir
-
+        self.player = player
     def update(self):
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
         if collided_bullet:  # проверка если попали пулей
             collided_bullet.kill()
+            self.player.points += 1
             boom1 = Boom(self.image, self.rect, all_sprites, size=1.25)
             self.kill()
         if self.direction_x == 1:
@@ -140,13 +142,14 @@ class EnemyShip(pygame.sprite.Sprite):
 
 
 class BigEnemyShip(pygame.sprite.Sprite):
-    def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=False):
+    def __init__(self, x, y, dir_x, attack_speed, player, *group, change_dir=False):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
         self.direction_y = True
         self.hp = 3
+        self.player = player
         original_image = load_image("BigEnemyShip.png", -1)
         scaled_image = pygame.transform.scale(original_image, (self.screen_width // 10, self.screen_height // 10))
         rotated_image = pygame.transform.rotate(scaled_image, +180)
@@ -161,6 +164,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
 
     def update(self):
         if self.hp == 0:
+            self.player.points += 3
             boom2 = Boom(self.image, self.rect, all_sprites, size=2)
             self.kill()
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
@@ -223,6 +227,7 @@ class Rocket(pygame.sprite.Sprite):
         if collided_bullet or collided_player:
             boom_sound.play()
             if collided_bullet:
+                self.player.points += 1
                 collided_bullet.kill()
                 Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
                 self.kill()
@@ -280,7 +285,7 @@ class Alarm(pygame.sprite.Sprite):
 
 
 class SmallEnemy(pygame.sprite.Sprite):
-    def __init__(self, x, y, dir_x, attack_speed, *group, change_dir=True):
+    def __init__(self, x, y, dir_x, attack_speed, player, *group, change_dir=True):
         super().__init__(*group)
         self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
         original_image = load_image("smallShip.png", -1)
@@ -290,6 +295,7 @@ class SmallEnemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
+        self.player = player
         self.change_dir = change_dir
         self.attack_speed = attack_speed
         self.attack_count = 1
@@ -298,6 +304,7 @@ class SmallEnemy(pygame.sprite.Sprite):
     def update(self):
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
         if collided_bullet:  # проверка если попали пулей
+            self.player.points += 1
             collided_bullet.kill()
             boom3 = Boom(self.image, self.rect, all_sprites, size=1)
             self.kill()
@@ -362,6 +369,14 @@ class HP(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.y = y
 
+class Points(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(all_sprites)
+        original_image = load_image("points.jpg", -1)
+        self.image = pygame.transform.scale(original_image, (64, 64))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.y = y
 
 class HPBoost(pygame.sprite.Sprite):
     def __init__(self):

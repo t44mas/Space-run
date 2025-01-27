@@ -1,7 +1,7 @@
 import pygame
 import  random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
-    SmallEnemy, load_image
+    SmallEnemy, load_image, Points
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -134,13 +134,15 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
 
     # Интерфейс
     HP1 = HP(128, 16)
+    POINTS = Points(256, 16)
+
 
     player = MainShip(all_sprites, player_sprite)
-    enemy1 = EnemyShip(300, 200, 1, 2, enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
-    enemy2 = EnemyShip(900, 200, -1, 2, enemy_sprites)  # также есть скрытый параметр change_dir=False
-    enemy3 = BigEnemyShip(300, 200, 1, 3, enemy_sprites)
+    enemy1 = EnemyShip(300, 200, 1, 2, player, enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
+    enemy2 = EnemyShip(900, 200, -1, 2,player, enemy_sprites)  # также есть скрытый параметр change_dir=False
+    enemy3 = BigEnemyShip(300, 200, 1, 3,player, enemy_sprites)
     rocket = Rocket(100, 100, player, all_sprites)
-    small = SmallEnemy(200, 200, 1, 1, enemy_sprites)
+    small = SmallEnemy(200, 200, 1, 1,player, enemy_sprites)
 
     while running:
         for event in pygame.event.get():
@@ -210,6 +212,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
 
         # проверка на потерю хп чтобы удалить спрайты
         hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
+        points_count = my_font.render(str(player.points), False, (255, 255, 255))
         all_sprites.update()
         enemy_sprites.update()
         boosts_sprites.update()
@@ -218,5 +221,6 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
         screen.blit(hp_count, (64, 16))
+        screen.blit(points_count, (192, 16))
         pygame.display.flip()
         clock.tick(FPS)
