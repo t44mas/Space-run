@@ -1,7 +1,7 @@
 import pygame
 import  random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
-    SmallEnemy, load_image, Points
+    SmallEnemy, load_image, Points, records
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -30,6 +30,7 @@ pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 
 
+
 # начальный экран
 def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     intro_text = ["ЗАСТАВКА", "",
@@ -39,6 +40,10 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
+
+
+    records(12, 12, 12, 12, 100)
+
 
     # ШРИФТ
     font = pygame.font.Font(None, 30)

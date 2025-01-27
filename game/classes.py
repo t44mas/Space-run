@@ -5,6 +5,7 @@ import random
 import math
 from config import SHIP_SPEED, SHIP_HEALTH, BULLET_SPEED, ENEMY_SPEED, BIG_ENEMY_SPEED, ROCKET_SPEED
 from config import screen_width, screen_height
+import sqlite3
 # Звуки
 boom_sound = pygame.mixer.Sound('data\\Sounds\\Boom1.wav')
 boom_sound.set_volume(0.2)
@@ -31,6 +32,22 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey)
     return image
 
+
+def records(EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points):
+    con = sqlite3.connect("records.db")
+    cur = con.cursor()
+    sql_query = """
+                INSERT INTO records (EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points)
+                VALUES (?, ?, ?, ?, ?)
+            """
+    # Выполнение запроса с передачей параметров
+    cur.execute(sql_query, (EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points))
+
+    # Сохранение изменений
+    con.commit()
+    result = cur.execute("""SELECT * FROM records""").fetchall()
+    print(result)
+    con.close()
 
 class MainShip(pygame.sprite.Sprite):
     def __init__(self, *group):
@@ -429,5 +446,4 @@ class Boom(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(center=self.rect.center)
             else:
                 self.kill()
-
 
