@@ -1,7 +1,7 @@
 # Глобальные переменные
 import pygame
 
-SHIP_SPEED = 7
+SHIP_SPEED = 8
 SHIP_HEALTH = 3
 BULLET_SPEED = 8
 ENEMY_SPEED = 5
