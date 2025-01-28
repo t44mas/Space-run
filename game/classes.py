@@ -6,6 +6,7 @@ import math
 from config import SHIP_SPEED, SHIP_HEALTH, BULLET_SPEED, ENEMY_SPEED, BIG_ENEMY_SPEED, ROCKET_SPEED
 from config import screen_width, screen_height
 import sqlite3
+
 # Звуки
 boom_sound = pygame.mixer.Sound('data\\Sounds\\Boom1.wav')
 boom_sound.set_volume(0.2)
@@ -48,6 +49,7 @@ def records(EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points):
     result = cur.execute("""SELECT * FROM records""").fetchall()
     print(result)
     con.close()
+
 
 class MainShip(pygame.sprite.Sprite):
     def __init__(self, *group):
@@ -114,6 +116,7 @@ class MainShip(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.top - 20, all_sprites,
                         player_bullets_sprites)
 
+
 class EnemyShip(pygame.sprite.Sprite):
     def __init__(self, x, y, dir_x, attack_speed, player, *group, change_dir=False):
         super().__init__(*group)
@@ -132,6 +135,7 @@ class EnemyShip(pygame.sprite.Sprite):
         self.speed = ENEMY_SPEED
         self.change_dir = change_dir
         self.player = player
+
     def update(self):
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
         if collided_bullet:  # проверка если попали пулей
@@ -204,6 +208,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
             if rand_speed < 0.1:
                 self.direction_x = -self.direction_x
         self.check_out_of_bounds()
+
     def enemy_shooting(self):
         # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
         if self.attack_count == self.attack_speed:
@@ -216,6 +221,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
     def check_out_of_bounds(self):
         if self.rect.top > self.screen_height:
             self.rect.bottom = 0  # переносим врага в верх
+
 
 class Rocket(pygame.sprite.Sprite):
     def __init__(self, x, y, player, *group):
@@ -232,8 +238,6 @@ class Rocket(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = y
 
-
-
         self.speed = ROCKET_SPEED
         self.player = player
         self.angle = 0  # угол для разворота изображения
@@ -249,6 +253,8 @@ class Rocket(pygame.sprite.Sprite):
                 Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
                 self.kill()
             if collided_player:
+                Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
+                self.kill()
                 collided_player.hp -= 1
             return
         # расчет направления
@@ -386,6 +392,7 @@ class HP(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.y = y
 
+
 class Points(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__(all_sprites)
@@ -394,6 +401,7 @@ class Points(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.y = y
+
 
 class HPBoost(pygame.sprite.Sprite):
     def __init__(self):
@@ -446,4 +454,3 @@ class Boom(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(center=self.rect.center)
             else:
                 self.kill()
-
