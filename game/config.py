@@ -9,7 +9,7 @@ BIG_ENEMY_SPEED = 1
 FPS = 40
 MUSIC_VOLUME = 0.1
 EFFECT_VOLUME = 0.1
-ROCKET_SPEED = 2
+ROCKET_SPEED = 4
 # получаем информацию о дисплее
 pygame.init()
 info = pygame.display.Info()

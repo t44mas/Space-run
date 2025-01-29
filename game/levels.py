@@ -1,7 +1,7 @@
 import pygame
-import  random
+import random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
-    SmallEnemy, load_image, Points, records
+    SmallEnemy, load_image, Points, records, SpeedBoost, score
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 
 # Глоб переменные
@@ -14,7 +14,7 @@ SPEEDUPCD = pygame.USEREVENT + 5
 ALARM = pygame.USEREVENT + 6
 LASERSPAWN = pygame.USEREVENT + 7
 LASERDELETE = pygame.USEREVENT + 8
-CHANGEENEMYDIR = pygame.USEREVENT + 9 # событие смены направления мальнького кораблся
+CHANGEENEMYDIR = pygame.USEREVENT + 9  # событие смены направления мальнького кораблся
 
 # Музыка и звуки
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
@@ -24,7 +24,6 @@ laser_sound = pygame.mixer.Sound('data\\Sounds\\laser.wav')
 sound_shoot.set_volume(EFFECT_VOLUME)
 alarm_sound.set_volume(EFFECT_VOLUME / 3)
 laser_sound.set_volume(0.5)
-
 pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 
@@ -39,9 +38,7 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-
     records(12, 12, 12, 12, 100)
-
 
     # ШРИФТ
     font = pygame.font.Font(None, 30)
@@ -62,7 +59,7 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                return None
+                return "exit"
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 for i, rect in enumerate(text_rects):
@@ -78,10 +75,14 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
         clock.tick(FPS)
 
 
-def lose_screen(screen,clock,FPS,WIDTH,HEIGHT):
-    intro_text = ["RETRY",
+def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
+    print(player_sprite)
+    print(score.score)
+    intro_text = [f"SCORE: {score.score}",
                   "",
-                  "RECORDS"]
+                  "RETRY!",
+                  "",
+                  "Records"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('LoseBackground.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -110,13 +111,15 @@ def lose_screen(screen,clock,FPS,WIDTH,HEIGHT):
                 mouse_pos = event.pos
                 for i, rect in enumerate(text_rects):
                     if rect.collidepoint(mouse_pos):
-                        if intro_text[i] == "RETRY":
+                        if intro_text[i] == "RETRY!":
+                            score.clear()
                             return "game"
-                        elif intro_text[i] == "RECORDS":
+                        elif intro_text[i] == "Records":
                             pass
 
         pygame.display.flip()
         clock.tick(FPS)
+
 
 # Первый левел(он не такой должен быть это к примеру)
 
@@ -138,17 +141,19 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     laser_time_change = False
     # Интерфейс
     HP1 = HP(128, 16)
-    POINTS = Points(256, 16)
+    POINTS = Points(272, 16)
+    SPEEDBOOST = SpeedBoost(96, 96)
 
     # Волны врагов
     wave1 = False
-    wave2 = False
+    wave2 = True
     wave3 = False
-    wave4 = True
+    wave4 = False
 
     player = MainShip(all_sprites, player_sprite)
     enemy0 = EnemyShip(50, 300, 1, 2, player, enemy_sprites)
-    enemy1 = EnemyShip(300, 200, -1, 2, player, enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
+    enemy1 = EnemyShip(300, 200, -1, 2, player,
+                       enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
     enemy2 = EnemyShip(600, 300, -1, 2, player, enemy_sprites)  # также есть скрытый параметр change_dir=False
     enemy3 = EnemyShip(900, 200, 1, 2, player, enemy_sprites)
     enemy4 = EnemyShip(1200, 300, -1, 2, player, enemy_sprites)
@@ -168,6 +173,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     shooting = True
                 if event.key == pygame.K_LSHIFT:
                     if not speed_boost:  # проверяем прошло ли кд
+                        SPEEDBOOST.kill()
                         player.speed += 5  # увеличиваем скорость и запускаем таймера
                         pygame.time.set_timer(SPEEDUP, 3000)
                         pygame.time.set_timer(SPEEDUPCD, 6000)
@@ -205,6 +211,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                 player.speed = SHIP_SPEED
             if event.type == SPEEDUPCD:  # прошло кд и можно опять использовать ускорение
                 speed_boost = False
+                SPEEDBOOST = SpeedBoost(96, 96)
             if laser_time_change:
                 alarm_time = random.randint(10000, 20000)  # спавнит предупреждение о лазере от 10 до 20 сек
                 pygame.time.set_timer(ALARM, alarm_time)
@@ -273,7 +280,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     big4 = BigEnemyShip(100, 0, 1, 3, player, enemy_sprites)
         # проверка на потерю хп чтобы удалить спрайты
         hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
-        points_count = my_font.render(str(player.points), False, (255, 255, 255))
+        points_count = my_font.render(str(score.score), False, (255, 255, 255))
         all_sprites.update()
         enemy_sprites.update()
         boosts_sprites.update()

@@ -47,7 +47,7 @@ def records(EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points):
     # Сохранение изменений
     con.commit()
     result = cur.execute("""SELECT * FROM records""").fetchall()
-    print(result)
+    # print(result)
     con.close()
 
 
@@ -64,7 +64,6 @@ class MainShip(pygame.sprite.Sprite):
         self.rect.bottom = screen_height
         self.speed = SHIP_SPEED
         self.hp = SHIP_HEALTH
-        self.points = 0
         self.move_up = False
         self.move_down = False
         self.move_left = False
@@ -144,7 +143,7 @@ class EnemyShip(pygame.sprite.Sprite):
             collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
             if collided_bullet:  # проверка если попали пулей
                 collided_bullet.kill()
-                self.player.points += 1
+                score.score += 1
                 boom1 = Boom(self.image, self.rect, all_sprites, size=1.25)
                 self.kill()
             if self.direction_x == 1:
@@ -193,7 +192,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
 
     def update(self):
         if self.hp == 0:
-            self.player.points += 3
+            score.score += 3
             boom2 = Boom(self.image, self.rect, all_sprites, size=2)
             self.kill()
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
@@ -256,7 +255,7 @@ class Rocket(pygame.sprite.Sprite):
         if collided_bullet or collided_player:
             boom_sound.play()
             if collided_bullet:
-                self.player.points += 1
+                score.score += 1
                 collided_bullet.kill()
                 Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
                 self.kill()
@@ -339,7 +338,7 @@ class SmallEnemy(pygame.sprite.Sprite):
         else:
             collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
             if collided_bullet:  # проверка если попали пулей
-                self.player.points += 1
+                score.score += 1
                 collided_bullet.kill()
                 boom3 = Boom(self.image, self.rect, all_sprites, size=1)
                 self.kill()
@@ -418,6 +417,16 @@ class Points(pygame.sprite.Sprite):
         self.rect.y = y
 
 
+class SpeedBoost(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(all_sprites)
+        original_image = load_image("speed_boost.png")
+        self.image = pygame.transform.scale(original_image, (64, 64))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.y = y
+
+
 class HPBoost(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__(boosts_sprites)
@@ -469,3 +478,14 @@ class Boom(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(center=self.rect.center)
             else:
                 self.kill()
+
+
+class Score:
+    def __init__(self):
+        self.score = 0
+
+    def clear(self):
+        self.score = 0
+
+
+score = Score()
