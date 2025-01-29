@@ -144,6 +144,7 @@ class EnemyShip(pygame.sprite.Sprite):
             if collided_bullet:  # проверка если попали пулей
                 collided_bullet.kill()
                 score.score += 1
+                score.enemy += 1
                 boom1 = Boom(self.image, self.rect, all_sprites, size=1.25)
                 self.kill()
             if self.direction_x == 1:
@@ -193,6 +194,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
     def update(self):
         if self.hp == 0:
             score.score += 3
+            score.bigE += 1
             boom2 = Boom(self.image, self.rect, all_sprites, size=2)
             self.kill()
         collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
@@ -256,6 +258,7 @@ class Rocket(pygame.sprite.Sprite):
             boom_sound.play()
             if collided_bullet:
                 score.score += 1
+                score.rockets += 1
                 collided_bullet.kill()
                 Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
                 self.kill()
@@ -339,6 +342,7 @@ class SmallEnemy(pygame.sprite.Sprite):
             collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
             if collided_bullet:  # проверка если попали пулей
                 score.score += 1
+                score.smallE += 1
                 collided_bullet.kill()
                 boom3 = Boom(self.image, self.rect, all_sprites, size=1)
                 self.kill()
@@ -483,9 +487,17 @@ class Boom(pygame.sprite.Sprite):
 class Score:
     def __init__(self):
         self.score = 0
+        self.enemy = 0
+        self.bigE = 0
+        self.rockets = 0
+        self.smallE = 0
 
     def clear(self):
         self.score = 0
+        self.enemy = 0
+        self.bigE = 0
+        self.rockets = 0
+        self.smallE = 0
 
 
 score = Score()

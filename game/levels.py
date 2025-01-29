@@ -38,8 +38,6 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-    records(12, 12, 12, 12, 100)
-
     # ШРИФТ
     font = pygame.font.Font(None, 30)
 
@@ -76,8 +74,8 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
 
 
 def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
-    print(player_sprite)
-    print(score.score)
+    records(score.enemy, score.bigE, score.rockets, score.smallE, score.score)
+
     intro_text = [f"SCORE: {score.score}",
                   "",
                   "RETRY!",
