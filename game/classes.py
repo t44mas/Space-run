@@ -68,6 +68,7 @@ class MainShip(pygame.sprite.Sprite):
         self.move_down = False
         self.move_left = False
         self.move_right = False
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         if self.move_up and self.rect.y > 0:
@@ -79,15 +80,15 @@ class MainShip(pygame.sprite.Sprite):
         if self.move_right and self.rect.centerx < self.screen_width - 50:
             self.rect.x += self.speed
         # проверка попадания пули
-        if pygame.sprite.spritecollideany(self, enemy_bullets_sprites):
-            b = pygame.sprite.spritecollideany(self, enemy_bullets_sprites)  # помещаем спрайт пули в переменную
-            if b.enemy:  # проверка что пуля врага чтобы не получать урон от своих же пуль
-                self.hp -= 1
-                b.kill()
-        if pygame.sprite.spritecollideany(self, boosts_sprites):
-            b = pygame.sprite.spritecollideany(self, boosts_sprites)
-            b.kill()
-            self.hp += 1
+        collided_bullets = pygame.sprite.spritecollide(self, enemy_bullets_sprites, True, pygame.sprite.collide_mask)
+        if collided_bullets:
+            for bullet in collided_bullets:
+                if bullet.enemy:  # проверка что пуля врага чтобы не получать урон от своих же пуль
+                    self.hp -= 1
+        collided_boosts = pygame.sprite.spritecollide(self, boosts_sprites, True, pygame.sprite.collide_mask)
+        if collided_boosts:
+            for boost in enemy_sprites:
+                self.hp += 1
 
     # метод для движения при нажатии на клавиши wasd
     def handle_input(self, event):
@@ -135,18 +136,21 @@ class EnemyShip(pygame.sprite.Sprite):
         self.speed = ENEMY_SPEED
         self.change_dir = change_dir
         self.player = player
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         if self.rect.bottom < self.y:
             self.startAnim()
         else:
-            collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
-            if collided_bullet:  # проверка если попали пулей
-                collided_bullet.kill()
-                score.score += 1
-                score.enemy += 1
-                boom1 = Boom(self.image, self.rect, all_sprites, size=1.25)
-                self.kill()
+            collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True,
+                                                           pygame.sprite.collide_mask)
+            if collided_bullets:  # проверка если попали пулей
+                for bullet in collided_bullets:
+                    bullet.kill()
+                    score.score += 1
+                    score.enemy += 1
+                    boom1 = Boom(self.image, self.rect, all_sprites, size=1.25)
+                    self.kill()
             if self.direction_x == 1:
                 if self.rect.centerx < self.screen_width - 50:
                     self.rect.centerx += self.speed
@@ -190,6 +194,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
         self.attack_count = 1
         self.speed = BIG_ENEMY_SPEED
         self.change_dir = change_dir
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         if self.hp == 0:
@@ -197,13 +202,27 @@ class BigEnemyShip(pygame.sprite.Sprite):
             score.bigE += 1
             boom2 = Boom(self.image, self.rect, all_sprites, size=2)
             self.kill()
-        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
-        if collided_bullet:  # проверка если попали пулей
-            self.hp -= 1
-            collided_bullet.kill()
-        rand_speed = random.random()
+        collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True, pygame.sprite.collide_mask)
+        if collided_bullets:  # проверка если попали пулей
+            for bullet in collided_bullets:
+                self.hp -= 1
+        BigEnemyShip.change_dir(self)
         if self.direction_y:
             self.rect.bottom += self.speed
+
+        self.check_out_of_bounds()
+
+    def enemy_shooting(self):
+        # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
+        if self.attack_count == self.attack_speed:
+            bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 30,
+                         enemy_bullets_sprites, all_sprites, enemy=True, size=(25, 15))
+            self.attack_count = 1
+        else:
+            self.attack_count += 1
+
+    def change_dir(self):
+        rand_speed = random.random()
         if rand_speed < 0.3:
             if self.direction_x == 1:
                 if self.rect.centerx < self.screen_width - 50:
@@ -216,16 +235,6 @@ class BigEnemyShip(pygame.sprite.Sprite):
             rand_speed = random.random()
             if rand_speed < 0.1:
                 self.direction_x = -self.direction_x
-        self.check_out_of_bounds()
-
-    def enemy_shooting(self):
-        # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
-        if self.attack_count == self.attack_speed:
-            bul = Bullet(self.rect.centerx, self.rect.bottom + self.screen_width // 30,
-                         enemy_bullets_sprites, all_sprites, enemy=True, size=(25, 15))
-            self.attack_count = 1
-        else:
-            self.attack_count += 1
 
     def check_out_of_bounds(self):
         if self.rect.top > self.screen_height:
@@ -251,21 +260,25 @@ class Rocket(pygame.sprite.Sprite):
         self.player = player
         self.angle = 0  # угол для разворота изображения
 
+        self.mask = pygame.mask.from_surface(self.image)
+
     def update(self):
-        collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)  # Проверка столкновения с пулей
-        collided_player = pygame.sprite.spritecollideany(self, player_sprite)  # Проверка столкновения с игроком
-        if collided_bullet or collided_player:
+        collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True, pygame.sprite.collide_mask)
+        collided_players = pygame.sprite.spritecollide(self, player_sprite, False,
+                                                       pygame.sprite.collide_mask)  # Проверка столкновения с игроком
+        if collided_bullets or collided_players:
             boom_sound.play()
-            if collided_bullet:
-                score.score += 1
-                score.rockets += 1
-                collided_bullet.kill()
-                Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
-                self.kill()
-            if collided_player:
-                Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
-                self.kill()
-                collided_player.hp -= 1
+            if collided_bullets:
+                for bullet in collided_bullets:
+                    score.score += 1
+                    score.rockets += 1
+                    Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
+                    self.kill()
+            if collided_players:
+                for player in collided_players:
+                    Boom(self.image, self.rect, all_sprites, size=1.25, image='Boom_rocket.png', columns=3, rows=2)
+                    self.kill()
+                    player.hp -= 1
             return
         # расчет направления
         dx = self.player.rect.centerx - self.rect.centerx
@@ -299,12 +312,15 @@ class Laser(pygame.sprite.Sprite):
         self.cd = 800
         self.last = pygame.time.get_ticks()
 
+        self.mask = pygame.mask.from_surface(self.image)
+
     def update(self):
         now = pygame.time.get_ticks()
-        collided_player = pygame.sprite.spritecollideany(self, player_sprite)
-        if collided_player and now - self.last >= self.cd:
-            self.last = now
-            collided_player.hp -= 1
+        collided_players = pygame.sprite.spritecollide(self, player_sprite, False, pygame.sprite.collide_mask)
+        if collided_players and now - self.last >= self.cd:
+            for player in collided_players:
+                self.last = now
+                player.hp -= 1
 
 
 class Alarm(pygame.sprite.Sprite):
@@ -329,31 +345,36 @@ class SmallEnemy(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = 0
         self.y = y
+        self.direction_y = True
         self.player = player
         self.change_dir = change_dir
         self.attack_speed = attack_speed
         self.attack_count = 1
         self.speed = ENEMY_SPEED * 1.5
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
-        if self.rect.bottom < self.y:
-            self.startAnim()
-        else:
-            collided_bullet = pygame.sprite.spritecollideany(self, player_bullets_sprites)
-            if collided_bullet:  # проверка если попали пулей
+        collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True, pygame.sprite.collide_mask)
+        if collided_bullets:  # проверка если попали пулей
+            for bullet in collided_bullets:
                 score.score += 1
                 score.smallE += 1
-                collided_bullet.kill()
                 boom3 = Boom(self.image, self.rect, all_sprites, size=1)
                 self.kill()
-            if self.direction_x == 1:
-                if self.rect.centerx < screen_width - 50:
-                    self.rect.centerx += self.speed
-            if self.direction_x == -1:
-                if self.rect.centerx > 50:
-                    self.rect.centerx -= self.speed
-            if self.rect.centerx <= 50 or self.rect.centerx >= screen_width - 50:
-                self.direction_x *= -1
+        if self.direction_x == 1:
+            if self.rect.centerx < screen_width - 50:
+                self.rect.centerx += self.speed
+        if self.direction_x == -1:
+            if self.rect.centerx > 50:
+                self.rect.centerx -= self.speed
+        if self.rect.centerx <= 50 or self.rect.centerx >= screen_width - 50:
+            self.direction_x *= -1
+        if self.direction_y:
+            self.rect.bottom += self.speed
+        self.check_out_of_bounds()
 
     def enemy_shooting(self):
         # кароче count как счетчик, а attack_speed чем больше, тем медленее корабль стреляет. Тоесть при attack_speed = 1 мы стреляем каждое событие выстрела, а при 2-ух каждое второе
@@ -369,8 +390,9 @@ class SmallEnemy(pygame.sprite.Sprite):
         if a == 1:
             self.direction_x *= -1
 
-    def startAnim(self):
-        self.rect.y += 5
+    def check_out_of_bounds(self):
+        if self.rect.top > self.screen_height:
+            self.rect.bottom = 0  # переносим врага в верх
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -429,6 +451,7 @@ class SpeedBoost(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.y = y
+        self.mask = pygame.mask.from_surface(self.image)
 
 
 class HPBoost(pygame.sprite.Sprite):
@@ -438,6 +461,8 @@ class HPBoost(pygame.sprite.Sprite):
         self.image = original_image
         self.rect = self.image.get_rect()
         self.rect.centerx = random.randint(64, screen_width)
+
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.rect.y += 5
