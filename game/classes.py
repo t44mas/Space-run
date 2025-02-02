@@ -536,9 +536,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.bottom = 0
         self.y = y
         self.hp = 10
-        self.phase1 = True
-        self.phase2 = False
-        self.phase3 = False
+        self.phase = 1
         self.attack_speed = attack_speed
         self.attack_count = 1
         self.player = player
@@ -564,22 +562,62 @@ class Boss(pygame.sprite.Sprite):
                 for bullet in collided_bullets:
                     bullet.kill()
                     self.hp -= 1
-                    if self.hp <= 0 and self.phase1:
-                        self.phase1 = False
-                        self.phase2 = True
-                    elif self.hp <= 0 and self.phase2:
-                        self.phase2 = False
-                        self.phase3 = True
-                    elif self.hp <= 0 and self.phase3:
+                    if self.hp <= 0 and self.phase == 1:
+                        self.phase = 2
+                        self.hp = 10
+                        self.next_position = screen_width // 2
+                    elif self.hp <= 0 and self.phase == 2:
+                        self.phase = 3
+                        self.hp = 10
+                    elif self.hp <= 0 and self.phase == 3:
                         boom1 = Boom(self.image, self.rect, all_sprites, size=3)
                         self.kill()
 
-    def Laser_attack(self):
+    def laser_attack(self):
         self.next_position = random.randint(64, screen_width - 64)
         self.laser = Laser(self.rect.centerx, vertical=True)
 
+    def bounce_attack(self):
+            bul1 = BounceBullet(self.rect.centerx, self.rect.bottom, 1,
+                         enemy_bullets_sprites, all_sprites,)
+            bul2 = BounceBullet(self.rect.centerx, self.rect.bottom, -1,
+                               enemy_bullets_sprites, all_sprites)
+
     def startAnim(self):
         self.rect.y += 5
+
+
+class BounceBullet(pygame.sprite.Sprite):
+    def __init__(self, x, y, direction, *group, size=(42, 30)):
+        super().__init__(*group)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        original_image = load_image("Bullet.png", -1)
+        scaled_image = pygame.transform.scale(original_image,
+                                              (self.screen_width // size[0], self.screen_height // size[1]))
+        if direction == 1:
+            rotated_image = pygame.transform.rotate(scaled_image, 315)
+        else:
+            rotated_image = pygame.transform.rotate(scaled_image, 225)
+        self.image = rotated_image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.speed = BULLET_SPEED
+        self.direction = direction
+
+    def update(self):
+        if self.rect.centerx <= 10 or self.rect.centerx >= self.screen_width - 10:
+            if self.direction == 1:
+                rotated_image = pygame.transform.rotate(self.image, 270)
+            else:
+                rotated_image = pygame.transform.rotate(self.image, 90)
+            self.image = rotated_image.convert_alpha()
+            self.direction *= -1
+        self.rect.y += self.speed
+        self.rect.centerx += self.speed * self.direction
+        if self.rect.bottom < 0 or self.rect.top > self.screen_height:
+            self.kill()
 
 
 class Score:

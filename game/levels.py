@@ -363,6 +363,7 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
     # События и таймеры босса
     BOSSLASER = pygame.USEREVENT + 11
     BOSSLASERDELETE = pygame.USEREVENT + 12
+    BOSSBOUNCESHOOTING = pygame.USEREVENT + 13
 
     pygame.time.set_timer(BOSSLASER, 1000) # кд лазера
     pygame.time.set_timer(BOSSLASERDELETE, 2000) # сколько он действует
@@ -384,10 +385,10 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
     SPEEDBOOST = SpeedBoost(96, 96)
 
     player = MainShip(all_sprites, player_sprite)
-    enemy0 = EnemyShip(50, 200, 1, 2, player, enemy_sprites)
-    enemy2 = EnemyShip(400, 200, -1, 2, player, enemy_sprites)
-    enemy3 = EnemyShip(1500, 200, -1, 2, player, enemy_sprites)
-    enemy4 = EnemyShip(1900, 200, 1, 2, player, enemy_sprites)
+    #enemy0 = EnemyShip(50, 200, 1, 2, player, enemy_sprites)
+    #enemy2 = EnemyShip(400, 200, -1, 2, player, enemy_sprites)
+    #enemy3 = EnemyShip(1500, 200, -1, 2, player, enemy_sprites)
+    #enemy4 = EnemyShip(1900, 200, 1, 2, player, enemy_sprites)
     boss = Boss(screen_width // 2, 200, 2, player, boss_sprite)
 
     while running:
@@ -432,17 +433,24 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
                 pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
                 can_shoot = False
             # События БОССА
+
             if laser_boss_cd:
-                pygame.time.set_timer(BOSSLASER,1000)
-                pygame.time.set_timer(BOSSLASERDELETE, 2000)
+                if boss.phase == 1:
+                    pygame.time.set_timer(BOSSLASER,1000)
+                    pygame.time.set_timer(BOSSLASERDELETE, 2000)
+                else:
+                    pygame.time.set_timer(BOSSLASER, 0)
+                    pygame.time.set_timer(BOSSLASERDELETE, 0)
                 laser_boss_cd = False
             if event.type == BOSSLASER:
-                if boss_sprite and boss.moved:
-                    boss.Laser_attack()
+                if boss_sprite and boss.moved and boss.phase == 1:
+                    boss.laser_attack()
             if event.type == BOSSLASERDELETE:
                 boss.laser.kill()
                 boss.moved = False
                 laser_boss_cd = True
+            if event.type == BOSSBOUNCESHOOTING:
+                boss.bounce_attack()
             # События
             if event.type == ENEMYSHOOTING:
                 for enemy in enemy_sprites:
