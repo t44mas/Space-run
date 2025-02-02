@@ -535,7 +535,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = 0
         self.y = y
-        self.hp = 10
+        self.hp = 2
         self.phase = 1
         self.attack_speed = attack_speed
         self.attack_count = 1
@@ -564,7 +564,7 @@ class Boss(pygame.sprite.Sprite):
                     self.hp -= 1
                     if self.hp <= 0 and self.phase == 1:
                         self.phase = 2
-                        self.hp = 10
+                        self.hp = 20
                         self.next_position = screen_width // 2
                     elif self.hp <= 0 and self.phase == 2:
                         self.phase = 3
@@ -578,21 +578,23 @@ class Boss(pygame.sprite.Sprite):
         self.laser = Laser(self.rect.centerx, vertical=True)
 
     def bounce_attack(self):
-            bul1 = BounceBullet(self.rect.centerx, self.rect.bottom, 1,
-                         enemy_bullets_sprites, all_sprites,)
-            bul2 = BounceBullet(self.rect.centerx, self.rect.bottom, -1,
-                               enemy_bullets_sprites, all_sprites)
+        bul1 = BounceBullet(self.rect.centerx, self.rect.bottom, 1,
+                            enemy_bullets_sprites, all_sprites, )
+        bul2 = BounceBullet(self.rect.centerx, self.rect.bottom, -1,
+                            enemy_bullets_sprites, all_sprites)
+        self.next_position = random.randint(64, screen_width - 64)
+        self.moved = False
 
     def startAnim(self):
         self.rect.y += 5
 
 
 class BounceBullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction, *group, size=(42, 30)):
+    def __init__(self, x, y, direction, *group, enemy=True, size=(42, 30)):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
-        original_image = load_image("Bullet.png", -1)
+        original_image = load_image("BounceBullet.png", -1)
         scaled_image = pygame.transform.scale(original_image,
                                               (self.screen_width // size[0], self.screen_height // size[1]))
         if direction == 1:
@@ -605,6 +607,7 @@ class BounceBullet(pygame.sprite.Sprite):
         self.rect.bottom = y
         self.speed = BULLET_SPEED
         self.direction = direction
+        self.enemy = enemy
 
     def update(self):
         if self.rect.centerx <= 10 or self.rect.centerx >= self.screen_width - 10:

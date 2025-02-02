@@ -364,10 +364,13 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
     BOSSLASER = pygame.USEREVENT + 11
     BOSSLASERDELETE = pygame.USEREVENT + 12
     BOSSBOUNCESHOOTING = pygame.USEREVENT + 13
+    ROCKETSPAWN = pygame.USEREVENT + 14
 
     pygame.time.set_timer(BOSSLASER, 1000) # кд лазера
     pygame.time.set_timer(BOSSLASERDELETE, 2000) # сколько он действует
     laser_boss_cd = False
+    pygame.time.set_timer(BOSSBOUNCESHOOTING, 750)
+    pygame.time.set_timer(ROCKETSPAWN, 4500)
 
     pygame.time.set_timer(ENEMYSHOOTING, 750)
     pygame.time.set_timer(CHANGEENEMYDIR, 500)
@@ -449,8 +452,11 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
                 boss.laser.kill()
                 boss.moved = False
                 laser_boss_cd = True
-            if event.type == BOSSBOUNCESHOOTING:
+            if event.type == BOSSBOUNCESHOOTING and boss.phase == 2:
                 boss.bounce_attack()
+            if event.type == ROCKETSPAWN and boss.phase == 2:
+                rocket = Rocket(400, 200, player, all_sprites)
+                rocket2 = Rocket(screen_width - 400, 200, player, all_sprites)
             # События
             if event.type == ENEMYSHOOTING:
                 for enemy in enemy_sprites:
