@@ -53,7 +53,7 @@ def records(EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points):
 
 
 class MainShip(pygame.sprite.Sprite):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -61,8 +61,8 @@ class MainShip(pygame.sprite.Sprite):
         scaled_image = pygame.transform.scale(original_image, (self.screen_width // 18, self.screen_height // 18))
         self.image = scaled_image.convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.centerx = screen_width // 2
-        self.rect.bottom = screen_height
+        self.rect.centerx = x
+        self.rect.bottom = y
         self.speed = SHIP_SPEED
         self.hp = SHIP_HEALTH
         self.move_up = False
@@ -535,7 +535,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = 0
         self.y = y
-        self.hp = 2
+        self.hp = 10
         self.phase = 1
         self.attack_speed = attack_speed
         self.attack_count = 1
@@ -543,7 +543,7 @@ class Boss(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.laser = None
         self.moved = True
-        self.next_position = None
+        self.next_position = random.randint(64, screen_width - 64)
 
     def update(self):
         if self.rect.bottom < self.y:

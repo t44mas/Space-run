@@ -2,10 +2,10 @@ import pygame
 import random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
     SmallEnemy, load_image, Points, records, SpeedBoost, score, Boss, boss_sprite
-from config import MUSIC_VOLUME, EFFECT_VOLUME
+from config import MUSIC_VOLUME, EFFECT_VOLUME, SHIP_SPEED
 import sqlite3
-# Глоб переменные
-SHIP_SPEED = 5
+
+# Глоб переменныеw
 SHOOTCD = pygame.USEREVENT + 1
 ENEMYSHOOTING = pygame.USEREVENT + 2
 HPBOOSTSPAWN = pygame.USEREVENT + 3
@@ -15,7 +15,7 @@ ALARM = pygame.USEREVENT + 6
 LASERSPAWN = pygame.USEREVENT + 7
 LASERDELETE = pygame.USEREVENT + 8
 CHANGEENEMYDIR = pygame.USEREVENT + 9  # событие смены направления мальнького кораблся
-DIEANIM = pygame.USEREVENT + 10
+PLAYERPOS = (0, 0)
 
 # Музыка и звуки
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
@@ -34,6 +34,7 @@ BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
 font_small = pygame.font.Font(None, 24)
 font_medium = pygame.font.Font(None, 45)
+
 
 # начальный экран
 def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
@@ -126,12 +127,13 @@ def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
             conn.close()
 
 
-def draw_text(text, font, color, surface, x, y): # рисуем текст
+def draw_text(text, font, color, surface, x, y):  # рисуем текст
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect()
     text_rect.left = x
     text_rect.top = y
     surface.blit(text_obj, text_rect)
+
 
 def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
     records(score.enemy, score.bigE, score.rockets, score.smallE, score.score)
@@ -186,6 +188,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     shooting = False
     can_shoot = True
     speed_boost = False
+    died = False
 
     pygame.time.set_timer(ENEMYSHOOTING, 750)
     pygame.time.set_timer(CHANGEENEMYDIR, 500)
@@ -203,13 +206,12 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     SPEEDBOOST = SpeedBoost(96, 96)
 
     # Волны врагов
-    wave1 = False
-    wave2 = True
+    wave1 = True
+    wave2 = False
     wave3 = False
     wave4 = False
 
-    player = MainShip(all_sprites, player_sprite)
-    boss = Boss(screen_width // 2, 200, 2, player,boss_sprite)
+    player = MainShip(screen_width // 2, screen_height, all_sprites, player_sprite)
     enemy0 = EnemyShip(50, 300, 1, 2, player, enemy_sprites)
     enemy1 = EnemyShip(300, 200, -1, 2, player,
                        enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
@@ -217,7 +219,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     enemy3 = EnemyShip(900, 200, 1, 2, player, enemy_sprites)
     enemy4 = EnemyShip(1200, 300, -1, 2, player, enemy_sprites)
     enemy5 = EnemyShip(1500, 200, -1, 2, player, enemy_sprites)
-    enemy6 = EnemyShip(1800, 300, 1, 2, player, enemy_sprites)
+    # enemy6 = EnemyShip(1800, 300, 1, 2, player, enemy_sprites)
     # enemy3 = BigEnemyShip(300, 200, 1, 4, player, enemy_sprites)
     # rocket = Rocket(100, 100, player, all_sprites)
     # small1 = SmallEnemy(200, 200, 1, 1,player, enemy_sprites)
@@ -226,7 +228,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
             if event.type == pygame.QUIT:
                 running = False
                 return "exit"
-            player.handle_input(event)
+            if not died:
+                player.handle_input(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     shooting = True
@@ -246,10 +249,13 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                 can_shoot = True
 
             if player.hp <= 0:
-                for x in all_sprites, enemy_sprites, boosts_sprites:
-                    for y in x:
-                        y.kill()
-                return "lose"
+                died = True
+                player.kill()
+                if died:
+                    for x in all_sprites, enemy_sprites, boosts_sprites:
+                        for y in x:
+                            y.kill()
+                    return "lose"
 
             if shooting and can_shoot:
                 player.main_ship_shooting()
@@ -257,6 +263,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                 pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
                 can_shoot = False
             # События
+
             if event.type == ENEMYSHOOTING:
                 for enemy in enemy_sprites:
                     enemy.enemy_shooting()
@@ -337,6 +344,12 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     big2 = BigEnemyShip(1000, 0, -1, 3, player, enemy_sprites)
                     big3 = BigEnemyShip(1800, 0, -1, 3, player, enemy_sprites)
                     big4 = BigEnemyShip(100, 0, 1, 3, player, enemy_sprites)
+                else:
+                    global PLAYERPOS
+                    PLAYERPOS = (player.rect.centerx, player.rect.y)
+                    player.kill()
+                    return "boss"
+
         # проверка на потерю хп чтобы удалить спрайты
         hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
         points_count = my_font.render(str(score.score), False, (255, 255, 255))
@@ -353,7 +366,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
         clock.tick(FPS)
 
 
-def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, boosts_sprites,boss_sprite, my_font):
+def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, boosts_sprites, boss_sprite,
+               my_font):
     running = True
     shooting = False
     can_shoot = True
@@ -366,8 +380,8 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
     BOSSBOUNCESHOOTING = pygame.USEREVENT + 13
     ROCKETSPAWN = pygame.USEREVENT + 14
 
-    pygame.time.set_timer(BOSSLASER, 1000) # кд лазера
-    pygame.time.set_timer(BOSSLASERDELETE, 2000) # сколько он действует
+    pygame.time.set_timer(BOSSLASER, 1000)  # кд лазера
+    pygame.time.set_timer(BOSSLASERDELETE, 2000)  # сколько он действует
     laser_boss_cd = False
     pygame.time.set_timer(BOSSBOUNCESHOOTING, 750)
     pygame.time.set_timer(ROCKETSPAWN, 4500)
@@ -387,11 +401,11 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
     POINTS = Points(272, 16)
     SPEEDBOOST = SpeedBoost(96, 96)
 
-    player = MainShip(all_sprites, player_sprite)
-    #enemy0 = EnemyShip(50, 200, 1, 2, player, enemy_sprites)
-    #enemy2 = EnemyShip(400, 200, -1, 2, player, enemy_sprites)
-    #enemy3 = EnemyShip(1500, 200, -1, 2, player, enemy_sprites)
-    #enemy4 = EnemyShip(1900, 200, 1, 2, player, enemy_sprites)
+    player = MainShip(PLAYERPOS[0], PLAYERPOS[1], all_sprites, player_sprite)
+    enemy0 = EnemyShip(50, 200, 1, 2, player, enemy_sprites)
+    enemy2 = EnemyShip(400, 200, -1, 2, player, enemy_sprites)
+    enemy3 = EnemyShip(1500, 200, -1, 2, player, enemy_sprites)
+    enemy4 = EnemyShip(1900, 200, 1, 2, player, enemy_sprites)
     boss = Boss(screen_width // 2, 200, 2, player, boss_sprite)
 
     while running:
@@ -399,7 +413,8 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
             if event.type == pygame.QUIT:
                 running = False
                 return "exit"
-            player.handle_input(event)
+            if not died:
+                player.handle_input(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     shooting = True
@@ -418,12 +433,9 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
             if event.type == SHOOTCD:
                 can_shoot = True
 
-            if event.type == DIEANIM:
-                died = True
-
             if player.hp <= 0:
+                died = True
                 player.kill()
-                pygame.time.set_timer(DIEANIM, 200)
                 if died:
                     for x in all_sprites, enemy_sprites, boosts_sprites, boss_sprite:
                         for y in x:
@@ -439,7 +451,7 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
 
             if laser_boss_cd:
                 if boss.phase == 1:
-                    pygame.time.set_timer(BOSSLASER,1000)
+                    pygame.time.set_timer(BOSSLASER, 1000)
                     pygame.time.set_timer(BOSSLASERDELETE, 2000)
                 else:
                     pygame.time.set_timer(BOSSLASER, 0)

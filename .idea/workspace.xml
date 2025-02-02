@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Делаю вторую фазу">
-      <change afterPath="$PROJECT_DIR$/game/data/BounceBullet.png" afterDir="false" />
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Сделал вторую фазу">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/records.db" beforeDir="false" afterPath="$PROJECT_DIR$/game/records.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,7 +205,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738525259513</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Сделал вторую фазу">
+      <option name="closed" value="true" />
+      <created>1738526887805</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1738526887805</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -233,6 +241,7 @@
     <MESSAGE value="Сделал иконку ускорения, Сделал чтобы в конце показывались очки(Сделал класс Score)" />
     <MESSAGE value="Сделал босс уровень, сделал первую фазу босса" />
     <MESSAGE value="Делаю вторую фазу" />
-    <option name="LAST_COMMIT_MESSAGE" value="Делаю вторую фазу" />
+    <MESSAGE value="Сделал вторую фазу" />
+    <option name="LAST_COMMIT_MESSAGE" value="Сделал вторую фазу" />
   </component>
 </project>

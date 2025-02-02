@@ -15,8 +15,11 @@ screen_state = start_screen(screen, clock, FPS, screen_width, screen_height)
 # Обработка 'кнопок'
 while True:
     if screen_state == "game":
+        screen_state = level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites,
+                             boosts_sprites,my_font)
+    if screen_state == "boss":
         screen_state = boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites,
-                             boosts_sprites, boss_sprite,my_font)
+                                  boosts_sprites, boss_sprite, my_font)
     if screen_state == "lose":
         screen_state = lose_screen(screen, clock, FPS, screen_width, screen_height)
     if screen_state == 'records':
