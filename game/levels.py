@@ -3,7 +3,7 @@ import random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
     SmallEnemy, load_image, Points, records, SpeedBoost, score
 from config import MUSIC_VOLUME, EFFECT_VOLUME
-
+import sqlite3
 # Глоб переменные
 SHIP_SPEED = 5
 SHOOTCD = pygame.USEREVENT + 1
@@ -27,13 +27,18 @@ laser_sound.set_volume(0.5)
 pygame.mixer.music.set_volume(MUSIC_VOLUME)  # Громкость музыки
 pygame.mixer.music.play(-1)
 
+# консты для текста и фона records
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+font_small = pygame.font.Font(None, 24)
+font_medium = pygame.font.Font(None, 45)
 
 # начальный экран
 def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     intro_text = ["ЗАСТАВКА", "",
                   "Начать",
-                  "рекорды",
-                  "правила"]
+                  "рекорды"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -65,13 +70,67 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
                         if intro_text[i] == "Начать":
                             return "game"
                         elif intro_text[i] == "рекорды":
-                            pass
+                            return 'records'
                         elif intro_text[i] == "правила":
                             pass
 
         pygame.display.flip()
         clock.tick(FPS)
 
+
+def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
+    conn = None
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("""
+                    SELECT id, EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points
+                    FROM records
+                    ORDER BY id DESC
+                    LIMIT ?
+                """, (limit,))
+        records = cursor.fetchall()
+
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return 'exit'
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return 'menu'
+
+            screen.fill(BLACK)
+
+            title_text = font_medium.render("Последние Рекорды", True, WHITE)
+            title_rect = title_text.get_rect(center=(WIDTH // 2, 50))
+            screen.blit(title_text, title_rect)
+
+            y_offset = 100
+            for number, (id, EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points) in enumerate(records, 1):
+                text = f"{number}. id: {id},  Enemy: {EnemyShip},  BigEnemy: {BigEnemyShip},  Rocket: {Rocket},  SmallEnemy: {SmallEnemy},  Points: {Points}"
+                draw_text(text, font_small, WHITE, screen, 50, y_offset)
+                y_offset += 50
+
+            draw_text("Нажмите ESC, чтобы вернуться", font_small, GRAY, screen, 50, HEIGHT - 50)
+
+            pygame.display.flip()
+            clock.tick(FPS)
+    except Exception as e:
+        print(f"Ошибка при работе с БД: {e}")
+        return "menu"
+    finally:
+        if conn:
+            conn.close()
+
+
+def draw_text(text, font, color, surface, x, y): # рисуем текст
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect()
+    text_rect.left = x
+    text_rect.top = y
+    surface.blit(text_obj, text_rect)
 
 def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
     records(score.enemy, score.bigE, score.rockets, score.smallE, score.score)
@@ -113,7 +172,7 @@ def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
                             score.clear()
                             return "game"
                         elif intro_text[i] == "Records":
-                            pass
+                            return 'records'
 
         pygame.display.flip()
         clock.tick(FPS)

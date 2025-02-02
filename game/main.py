@@ -1,8 +1,8 @@
 from classes import MainShip, Bullet, EnemyShip, HP, HPBoost, SHIP_SPEED
 from classes import all_sprites, enemy_sprites, boosts_sprites, enemy_bullets_sprites, \
     player_bullets_sprites
-from config import size, screen_width, screen_height, FPS, MUSIC_VOLUME, EFFECT_VOLUME
-from levels import level_one, start_screen, lose_screen
+from config import size, screen_width, screen_height, FPS, MUSIC_VOLUME, EFFECT_VOLUME, db_file
+from levels import level_one, start_screen, lose_screen, get_top_scores
 import pygame
 
 # Переменные
@@ -19,5 +19,9 @@ while True:
                              boosts_sprites, my_font)
     if screen_state == "lose":
         screen_state = lose_screen(screen, clock, FPS, screen_width, screen_height)
+    if screen_state == 'records':
+        screen_state = get_top_scores(screen, clock, FPS, db_file, screen_width, screen_height)
+    if screen_state == "menu":
+        screen_state = start_screen(screen, clock, FPS, screen_width, screen_height)
     if screen_state == "exit":
         break

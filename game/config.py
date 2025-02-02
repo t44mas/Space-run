@@ -16,3 +16,5 @@ info = pygame.display.Info()
 screen_width = info.current_w - 100
 screen_height = info.current_h - 100
 size = screen_width, screen_height
+#дб
+db_file = 'records.db'

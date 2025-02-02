@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Сделал иконку ускорения, Сделал чтобы в конце показывались очки(Сделал класс Score)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/records.db" beforeDir="false" afterPath="$PROJECT_DIR$/game/records.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
