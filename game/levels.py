@@ -1,7 +1,7 @@
 import pygame
 import random
 from classes import MainShip, EnemyShip, Bullet, HPBoost, HP, BigEnemyShip, Rocket, player_sprite, Laser, Alarm, \
-    SmallEnemy, load_image, Points, records, SpeedBoost, score
+    SmallEnemy, load_image, Points, records, SpeedBoost, score, Boss, boss_sprite
 from config import MUSIC_VOLUME, EFFECT_VOLUME
 import sqlite3
 # Глоб переменные
@@ -15,6 +15,7 @@ ALARM = pygame.USEREVENT + 6
 LASERSPAWN = pygame.USEREVENT + 7
 LASERDELETE = pygame.USEREVENT + 8
 CHANGEENEMYDIR = pygame.USEREVENT + 9  # событие смены направления мальнького кораблся
+DIEANIM = pygame.USEREVENT + 10
 
 # Музыка и звуки
 pygame.mixer.music.load('data\\Sounds\\BackSound.ogg')
@@ -208,6 +209,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     wave4 = False
 
     player = MainShip(all_sprites, player_sprite)
+    boss = Boss(screen_width // 2, 200, 2, player,boss_sprite)
     enemy0 = EnemyShip(50, 300, 1, 2, player, enemy_sprites)
     enemy1 = EnemyShip(300, 200, -1, 2, player,
                        enemy_sprites)  # x, y, x_dir, attack_speed(чем больше тем медленее), spriteGroup
@@ -345,6 +347,152 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
         all_sprites.draw(screen)
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
+        screen.blit(hp_count, (64, 16))
+        screen.blit(points_count, (192, 16))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, boosts_sprites,boss_sprite, my_font):
+    running = True
+    shooting = False
+    can_shoot = True
+    speed_boost = False
+    died = False
+
+    # События и таймеры босса
+    BOSSLASER = pygame.USEREVENT + 11
+    BOSSLASERDELETE = pygame.USEREVENT + 12
+
+    pygame.time.set_timer(BOSSLASER, 1000) # кд лазера
+    pygame.time.set_timer(BOSSLASERDELETE, 2000) # сколько он действует
+    laser_boss_cd = False
+
+    pygame.time.set_timer(ENEMYSHOOTING, 750)
+    pygame.time.set_timer(CHANGEENEMYDIR, 500)
+    pygame.time.set_timer(HPBOOSTSPAWN, 15000)
+    pygame.time.set_timer(SPEEDUP, 0)
+    pygame.time.set_timer(SPEEDUPCD, 0)
+    alarm_time = random.randint(5000, 10000)  # спавнит предупреждение о лазере от 10 до 20 сек
+    pygame.time.set_timer(ALARM, alarm_time)
+    pygame.time.set_timer(LASERSPAWN, alarm_time + 2000)
+    pygame.time.set_timer(LASERDELETE, alarm_time + 4000)
+    laser_time_change = False
+    # Интерфейс
+    HP1 = HP(128, 16)
+    POINTS = Points(272, 16)
+    SPEEDBOOST = SpeedBoost(96, 96)
+
+    player = MainShip(all_sprites, player_sprite)
+    enemy0 = EnemyShip(50, 200, 1, 2, player, enemy_sprites)
+    enemy2 = EnemyShip(400, 200, -1, 2, player, enemy_sprites)
+    enemy3 = EnemyShip(1500, 200, -1, 2, player, enemy_sprites)
+    enemy4 = EnemyShip(1900, 200, 1, 2, player, enemy_sprites)
+    boss = Boss(screen_width // 2, 200, 2, player, boss_sprite)
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                return "exit"
+            player.handle_input(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    shooting = True
+                if event.key == pygame.K_LSHIFT:
+                    if not speed_boost:  # проверяем прошло ли кд
+                        SPEEDBOOST.kill()
+                        player.speed += 5  # увеличиваем скорость и запускаем таймера
+                        pygame.time.set_timer(SPEEDUP, 3000)
+                        pygame.time.set_timer(SPEEDUPCD, 6000)
+                        speed_boost = True
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    shooting = False
+            # Выстрел
+            if event.type == SHOOTCD:
+                can_shoot = True
+
+            if event.type == DIEANIM:
+                died = True
+
+            if player.hp <= 0:
+                player.kill()
+                pygame.time.set_timer(DIEANIM, 200)
+                if died:
+                    for x in all_sprites, enemy_sprites, boosts_sprites, boss_sprite:
+                        for y in x:
+                            y.kill()
+                    return "lose"
+
+            if shooting and can_shoot:
+                player.main_ship_shooting()
+                sound_shoot.play()
+                pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
+                can_shoot = False
+            # События БОССА
+            if laser_boss_cd:
+                pygame.time.set_timer(BOSSLASER,1000)
+                pygame.time.set_timer(BOSSLASERDELETE, 2000)
+                laser_boss_cd = False
+            if event.type == BOSSLASER:
+                if boss_sprite and boss.moved:
+                    boss.Laser_attack()
+            if event.type == BOSSLASERDELETE:
+                boss.laser.kill()
+                boss.moved = False
+                laser_boss_cd = True
+            # События
+            if event.type == ENEMYSHOOTING:
+                for enemy in enemy_sprites:
+                    enemy.enemy_shooting()
+            if event.type == CHANGEENEMYDIR:  # меняет направление
+                for enemy in enemy_sprites:
+                    if enemy.change_dir:
+                        enemy.changeDir()
+            if event.type == HPBOOSTSPAWN:
+                hp_boost1 = HPBoost()
+            if event.type == SPEEDUP:  # прошло время ускорения
+                player.speed = SHIP_SPEED
+            if event.type == SPEEDUPCD:  # прошло кд и можно опять использовать ускорение
+                speed_boost = False
+                SPEEDBOOST = SpeedBoost(96, 96)
+            if laser_time_change:
+                alarm_time = random.randint(5000, 10000)  # спавнит предупреждение о лазере от 10 до 20 сек
+                pygame.time.set_timer(ALARM, alarm_time)
+                pygame.time.set_timer(LASERSPAWN, alarm_time + 2000)
+                pygame.time.set_timer(LASERDELETE, alarm_time + 4000)
+                laser_time_change = False
+            if event.type == ALARM:
+                alarm_sound.play()
+                laser_y1 = random.randint(32, screen_height - 32)  # случайная y для лазера
+                laser_y2 = random.randint(32, screen_height - 32)  # случайная y для лазера
+                alarm = Alarm(laser_y1 + 32)
+                alarm2 = Alarm(laser_y2 + 32)
+            if event.type == LASERSPAWN:
+                alarm.kill()
+                alarm2.kill()
+                laser_sound.play()
+                laser1 = Laser(laser_y1)
+                laser2 = Laser(laser_y2)
+            if event.type == LASERDELETE:
+                laser1.kill()
+                laser2.kill()
+                laser_time_change = True
+
+        # проверка на потерю хп чтобы удалить спрайты
+        hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
+        points_count = my_font.render(str(score.score), False, (255, 255, 255))
+        all_sprites.update()
+        enemy_sprites.update()
+        boosts_sprites.update()
+        boss_sprite.update()
+        screen.fill('black')
+        all_sprites.draw(screen)
+        enemy_sprites.draw(screen)
+        boosts_sprites.draw(screen)
+        boss_sprite.draw(screen)
         screen.blit(hp_count, (64, 16))
         screen.blit(points_count, (192, 16))
         pygame.display.flip()

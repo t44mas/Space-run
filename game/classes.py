@@ -18,6 +18,7 @@ boosts_sprites = pygame.sprite.Group()
 bullets_sprites = pygame.sprite.Group()
 player_bullets_sprites = pygame.sprite.Group()
 enemy_bullets_sprites = pygame.sprite.Group()
+boss_sprite = pygame.sprite.Group()
 
 
 def load_image(name, colorkey=None):
@@ -84,11 +85,12 @@ class MainShip(pygame.sprite.Sprite):
         if collided_bullets:
             for bullet in collided_bullets:
                 if bullet.enemy:  # проверка что пуля врага чтобы не получать урон от своих же пуль
+                    if self.hp == 1:
+                        boom1 = Boom(self.image, self.rect, all_sprites, size=2.5)
                     self.hp -= 1
         collided_boosts = pygame.sprite.spritecollide(self, boosts_sprites, True, pygame.sprite.collide_mask)
         if collided_boosts:
-            for boost in enemy_sprites:
-                self.hp += 1
+            self.hp += 1
 
     # метод для движения при нажатии на клавиши wasd
     def handle_input(self, event):
@@ -302,14 +304,22 @@ class Rocket(pygame.sprite.Sprite):
 
 
 class Laser(pygame.sprite.Sprite):
-    def __init__(self, y):
+    def __init__(self, y, vertical=False):
         super().__init__(all_sprites)
         original_image = load_image("laser.png")
-        self.image = pygame.transform.scale(original_image, (screen_width, screen_height // 10))
-        self.rect = self.image.get_rect()
-        self.rect.centerx = screen_width // 2
-        self.rect.y = y
-        self.cd = 800
+        if not vertical:
+            self.image = pygame.transform.scale(original_image, (screen_width, screen_height // 10))
+            self.rect = self.image.get_rect()
+            self.rect.centerx = screen_width // 2
+            self.rect.y = y
+        else:
+            scaled_image = pygame.transform.scale(original_image, (screen_width, screen_height // 10))
+            rotated_image = pygame.transform.rotate(scaled_image, +90)
+            self.image = rotated_image.convert_alpha()
+            self.rect = self.image.get_rect()
+            self.rect.centerx = y
+            self.rect.y = 30
+        self.cd = 0
         self.last = pygame.time.get_ticks()
 
         self.mask = pygame.mask.from_surface(self.image)
@@ -318,8 +328,11 @@ class Laser(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         collided_players = pygame.sprite.spritecollide(self, player_sprite, False, pygame.sprite.collide_mask)
         if collided_players and now - self.last >= self.cd:
+            self.cd = 800
             for player in collided_players:
                 self.last = now
+                if player.hp == 1:
+                    boom1 = Boom(player.image, player.rect, all_sprites, size=2.5)
                 player.hp -= 1
 
 
@@ -373,7 +386,7 @@ class SmallEnemy(pygame.sprite.Sprite):
         if self.rect.centerx <= 50 or self.rect.centerx >= screen_width - 50:
             self.direction_x *= -1
         if self.direction_y:
-            self.rect.bottom += self.speed
+            self.rect.bottom += self.speed / 2
         self.check_out_of_bounds()
 
     def enemy_shooting(self):
@@ -507,6 +520,66 @@ class Boom(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(center=self.rect.center)
             else:
                 self.kill()
+
+
+class Boss(pygame.sprite.Sprite):
+    def __init__(self, x, y, attack_speed, player, *group):
+        super().__init__(*group)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        original_image = load_image("boss.png", -1)
+        scaled_image = pygame.transform.scale(original_image, (self.screen_width // 6, self.screen_height // 6))
+        rotated_image = pygame.transform.rotate(scaled_image, +180)
+        self.image = rotated_image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = x
+        self.rect.bottom = 0
+        self.y = y
+        self.hp = 10
+        self.phase1 = True
+        self.phase2 = False
+        self.phase3 = False
+        self.attack_speed = attack_speed
+        self.attack_count = 1
+        self.player = player
+        self.mask = pygame.mask.from_surface(self.image)
+        self.laser = None
+        self.moved = True
+        self.next_position = None
+
+    def update(self):
+        if self.rect.bottom < self.y:
+            self.startAnim()
+        else:
+            if not self.moved:
+                if (self.rect.centerx - self.next_position) < -20:
+                    self.rect.centerx += 20
+                elif (self.rect.centerx - self.next_position) > 20:
+                    self.rect.centerx -= 20
+                else:
+                    self.moved = True
+            collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True,
+                                                           pygame.sprite.collide_mask)
+            if collided_bullets:  # проверка если попали пулей
+                for bullet in collided_bullets:
+                    bullet.kill()
+                    self.hp -= 1
+                    if self.hp <= 0 and self.phase1:
+                        self.phase1 = False
+                        self.phase2 = True
+                    elif self.hp <= 0 and self.phase2:
+                        self.phase2 = False
+                        self.phase3 = True
+                    elif self.hp <= 0 and self.phase3:
+                        boom1 = Boom(self.image, self.rect, all_sprites, size=3)
+                        self.kill()
+
+    def Laser_attack(self):
+        self.next_position = random.randint(64, screen_width - 64)
+        self.laser = Laser(self.rect.centerx, vertical=True)
+
+    def startAnim(self):
+        self.rect.y += 5
 
 
 class Score:
