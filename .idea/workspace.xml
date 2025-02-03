@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Босс стреляет лазером в место где был игрок, а так же сделал взрыв врагов от столкновения с игроком">
-      <change afterPath="$PROJECT_DIR$/game/data/fon2.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/records.db" beforeDir="false" afterPath="$PROJECT_DIR$/game/records.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +40,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "game",
+    "git-widget-placeholder": "bf0ce2d8",
     "last_opened_file_path": "C:/Users/user/PycharmProjects/Space-run/game/data",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
@@ -65,6 +64,7 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.11 (Space-run)" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/game" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />

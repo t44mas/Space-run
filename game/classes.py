@@ -540,7 +540,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = 0
         self.y = y
-        self.hp = 20
+        self.hp = 50
         self.phase = 1
         self.attack_speed = attack_speed
         self.attack_count = 1
@@ -567,9 +567,8 @@ class Boss(pygame.sprite.Sprite):
                 for bullet in collided_bullets:
                     bullet.kill()
                     self.hp -= 1
-                    if self.hp <= 0 and self.phase == 1:
+                    if self.hp <= 30 and self.phase == 1:
                         self.phase = 2
-                        self.hp = 30
                         self.next_position = screen_width // 2
                     elif self.hp <= 0 and self.phase == 2:
                         boom1 = Boom(self.image, self.rect, all_sprites, size=3)
