@@ -91,7 +91,12 @@ class MainShip(pygame.sprite.Sprite):
         collided_boosts = pygame.sprite.spritecollide(self, boosts_sprites, True, pygame.sprite.collide_mask)
         if collided_boosts:
             self.hp += 1
-
+        collided_enemys = pygame.sprite.spritecollide(self, enemy_sprites, True, pygame.sprite.collide_mask)
+        if collided_enemys:
+            self.hp -= 1
+            for enemy in collided_enemys:
+                boom2 = Boom(enemy.image, enemy.rect, all_sprites, size=1.25)
+                enemy.kill()
     # метод для движения при нажатии на клавиши wasd
     def handle_input(self, event):
         if event.type == pygame.KEYDOWN:
@@ -535,7 +540,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = 0
         self.y = y
-        self.hp = 10
+        self.hp = 20
         self.phase = 1
         self.attack_speed = attack_speed
         self.attack_count = 1
@@ -543,7 +548,7 @@ class Boss(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.laser = None
         self.moved = True
-        self.next_position = random.randint(64, screen_width - 64)
+        self.next_position = player.rect.centerx
 
     def update(self):
         if self.rect.bottom < self.y:
@@ -564,17 +569,14 @@ class Boss(pygame.sprite.Sprite):
                     self.hp -= 1
                     if self.hp <= 0 and self.phase == 1:
                         self.phase = 2
-                        self.hp = 20
+                        self.hp = 30
                         self.next_position = screen_width // 2
                     elif self.hp <= 0 and self.phase == 2:
-                        self.phase = 3
-                        self.hp = 10
-                    elif self.hp <= 0 and self.phase == 3:
                         boom1 = Boom(self.image, self.rect, all_sprites, size=3)
                         self.kill()
 
     def laser_attack(self):
-        self.next_position = random.randint(64, screen_width - 64)
+        self.next_position = self.next_position = self.player.rect.centerx
         self.laser = Laser(self.rect.centerx, vertical=True)
 
     def bounce_attack(self):

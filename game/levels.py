@@ -206,10 +206,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     SPEEDBOOST = SpeedBoost(96, 96)
 
     # Волны врагов
-    wave1 = True
-    wave2 = False
-    wave3 = False
-    wave4 = False
+    wave = 4  # 1-4 левела
 
     player = MainShip(screen_width // 2, screen_height, all_sprites, player_sprite)
     enemy0 = EnemyShip(50, 300, 1, 2, player, enemy_sprites)
@@ -296,16 +293,14 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                 laser1.kill()
                 laser_time_change = True
             if not enemy_sprites:
-                if wave1:
-                    wave1 = False
+                if wave == 1:
                     enemy0 = EnemyShip(300, 300, 1, 2, player, enemy_sprites)
                     enemy1 = EnemyShip(1000, 300, -1, 2, player, enemy_sprites)
                     enemy2 = EnemyShip(1600, 300, 1, 2, player, enemy_sprites)
                     big1 = BigEnemyShip(500, 0, 1, 3, player, enemy_sprites)
                     big2 = BigEnemyShip(1300, 0, -1, 3, player, enemy_sprites)
-                    wave2 = True
-                elif wave2:
-                    wave2 = False
+                    wave = 2
+                elif wave == 2:
                     enemy0 = EnemyShip(300, 300, 1, 2, player, enemy_sprites)
                     enemy1 = EnemyShip(1000, 300, -1, 2, player, enemy_sprites)
                     enemy2 = EnemyShip(1600, 300, 1, 2, player, enemy_sprites)
@@ -314,9 +309,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     rocket3 = Rocket(800, 100, player, all_sprites)
                     rocket4 = Rocket(1500, 100, player, all_sprites)
                     big1 = BigEnemyShip(screen_width // 2, 0, -1, 3, player, enemy_sprites)
-                    wave3 = True
-                elif wave3:
-                    wave3 = False
+                    wave = 3
+                elif wave == 3:
                     enemy0 = EnemyShip(300, 100, -1, 2, player, enemy_sprites)
                     enemy1 = EnemyShip(500, 300, 1, 2, player, enemy_sprites)
                     enemy2 = EnemyShip(800, 100, -1, 2, player, enemy_sprites)
@@ -327,9 +321,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     rocket2 = Rocket(800, 200, player, all_sprites)
                     small1 = SmallEnemy(350, 200, 1, 1, player, enemy_sprites)
                     small2 = SmallEnemy(1300, 400, -1, 1, player, enemy_sprites)
-                    wave4 = True
-                elif wave4:
-                    wave4 = False
+                    wave = 4
+                elif wave == 4:
                     enemy0 = EnemyShip(300, 100, -1, 2, player, enemy_sprites)
                     enemy1 = EnemyShip(500, 300, 1, 2, player, enemy_sprites)
                     small1 = SmallEnemy(500, 300, -1, 1, player, enemy_sprites)

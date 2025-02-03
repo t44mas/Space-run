@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Сделал вторую фазу">
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Сделал переход от 1 уровня к боссу">
+      <change afterPath="$PROJECT_DIR$/game/data/BackGround.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game/records.db" beforeDir="false" afterPath="$PROJECT_DIR$/game/records.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +213,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738526887805</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Сделал переход от 1 уровня к боссу">
+      <option name="closed" value="true" />
+      <created>1738530704957</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1738530704957</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -242,6 +250,7 @@
     <MESSAGE value="Сделал босс уровень, сделал первую фазу босса" />
     <MESSAGE value="Делаю вторую фазу" />
     <MESSAGE value="Сделал вторую фазу" />
-    <option name="LAST_COMMIT_MESSAGE" value="Сделал вторую фазу" />
+    <MESSAGE value="Сделал переход от 1 уровня к боссу" />
+    <option name="LAST_COMMIT_MESSAGE" value="Сделал переход от 1 уровня к боссу" />
   </component>
 </project>
