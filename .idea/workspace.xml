@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Исправил баг с переходом на босс уровень">
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Лазеры доделал">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/records.db" beforeDir="false" afterPath="$PROJECT_DIR$/game/records.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -237,7 +236,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738605347798</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Лазеры доделал">
+      <option name="closed" value="true" />
+      <created>1738605897157</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1738605897157</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -269,6 +276,7 @@
     <MESSAGE value="Сделал переход от 1 уровня к боссу" />
     <MESSAGE value="Босс стреляет лазером в место где был игрок, а так же сделал взрыв врагов от столкновения с игроком" />
     <MESSAGE value="Исправил баг с переходом на босс уровень" />
-    <option name="LAST_COMMIT_MESSAGE" value="Исправил баг с переходом на босс уровень" />
+    <MESSAGE value="Лазеры доделал" />
+    <option name="LAST_COMMIT_MESSAGE" value="Лазеры доделал" />
   </component>
 </project>
