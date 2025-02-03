@@ -58,7 +58,7 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
         intro_rect.x = 100
         screen.blit(string_rendered, intro_rect)
         text_rects.append(intro_rect)
-        text_coord += 30
+        text_coord += 60
 
     while True:
         for event in pygame.event.get():
@@ -350,7 +350,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
         all_sprites.update()
         enemy_sprites.update()
         boosts_sprites.update()
-        screen.fill('black')
+        fon = pygame.transform.scale(load_image('fon2.jpg'), (screen_width, screen_height))
+        screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
@@ -508,7 +509,8 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
         enemy_sprites.update()
         boosts_sprites.update()
         boss_sprite.update()
-        screen.fill('black')
+        fon = pygame.transform.scale(load_image('fon2.jpg'), (screen_width, screen_height))
+        screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
