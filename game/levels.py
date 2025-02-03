@@ -37,28 +37,31 @@ font_medium = pygame.font.Font(None, 45)
 
 
 # начальный экран
+
 def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
-    intro_text = ["ЗАСТАВКА", "",
-                  "Начать",
-                  "рекорды"]
+    pygame.display.set_caption("Space-Run")
+    intro_text = ["Space-Run", "", "Начать", "Рекорды"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-    # ШРИФТ
-    font = pygame.font.Font(None, 30)
+    # ШРИФТЫ
+    title_font = pygame.font.Font(None, 70)
+    button_font = pygame.font.Font(None, 40)
 
-    text_coord = 200
+    text_coord = HEIGHT // 4
     text_rects = []
 
-    for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        intro_rect.top = text_coord
-        intro_rect.x = 100
+    for i, line in enumerate(intro_text):
+        if i == 0:
+            font = title_font
+        else:
+            font = button_font
+        string_rendered = font.render(line, True, (255, 255, 255))
+        intro_rect = string_rendered.get_rect(center=(WIDTH // 2, text_coord))
         screen.blit(string_rendered, intro_rect)
         text_rects.append(intro_rect)
-        text_coord += 60
+        text_coord += 70
 
     while True:
         for event in pygame.event.get():
@@ -68,17 +71,16 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 for i, rect in enumerate(text_rects):
+                    if i == 0:
+                        continue
                     if rect.collidepoint(mouse_pos):
                         if intro_text[i] == "Начать":
                             return "game"
-                        elif intro_text[i] == "рекорды":
+                        elif intro_text[i] == "Рекорды":
                             return 'records'
-                        elif intro_text[i] == "правила":
-                            pass
 
         pygame.display.flip()
         clock.tick(FPS)
-
 
 def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
     conn = None
@@ -204,6 +206,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     HP1 = HP(128, 16)
     POINTS = Points(272, 16)
     SPEEDBOOST = SpeedBoost(96, 96)
+
+    score.score = 0
 
     # Волны врагов
     wave = 4  # 1-4 волны, другое число - босс уровень
@@ -345,7 +349,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     return "boss"
 
         # проверка на потерю хп чтобы удалить спрайты
-        hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
+        # hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
+        hp_count = my_font.render(str(3), False, (255, 255, 255))
         points_count = my_font.render(str(score.score), False, (255, 255, 255))
         all_sprites.update()
         enemy_sprites.update()
