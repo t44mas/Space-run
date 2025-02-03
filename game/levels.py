@@ -349,8 +349,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     return "boss"
 
         # проверка на потерю хп чтобы удалить спрайты
-        # hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
-        hp_count = my_font.render(str(3), False, (255, 255, 255))
+        hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
         points_count = my_font.render(str(score.score), False, (255, 255, 255))
         all_sprites.update()
         enemy_sprites.update()
