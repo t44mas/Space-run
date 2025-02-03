@@ -206,7 +206,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     SPEEDBOOST = SpeedBoost(96, 96)
 
     # Волны врагов
-    wave = 4  # 1-4 левела
+    wave = 4  # 1-4 волны, другое число - босс уровень
 
     player = MainShip(screen_width // 2, screen_height, all_sprites, player_sprite)
     enemy0 = EnemyShip(50, 300, 1, 2, player, enemy_sprites)
@@ -337,6 +337,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
                     big2 = BigEnemyShip(1000, 0, -1, 3, player, enemy_sprites)
                     big3 = BigEnemyShip(1800, 0, -1, 3, player, enemy_sprites)
                     big4 = BigEnemyShip(100, 0, 1, 3, player, enemy_sprites)
+                    wave = 5
                 else:
                     global PLAYERPOS
                     PLAYERPOS = (player.rect.centerx, player.rect.y)
