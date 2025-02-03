@@ -206,7 +206,7 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     SPEEDBOOST = SpeedBoost(96, 96)
 
     # Волны врагов
-    wave = 4  # 1-4 волны, другое число - босс уровень
+    wave = 1  # 1-4 волны, другое число - босс уровень
 
     player = MainShip(screen_width // 2, screen_height, all_sprites, player_sprite)
     enemy0 = EnemyShip(50, 300, 1, 2, player, enemy_sprites)
@@ -459,7 +459,7 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
                 boss.laser.kill()
                 boss.moved = False
                 laser_boss_cd = True
-            if event.type == BOSSBOUNCESHOOTING and boss.phase == 2:
+            if event.type == BOSSBOUNCESHOOTING and boss.phase == 2 and boss_sprite:
                 boss.bounce_attack()
             if event.type == ROCKETSPAWN and boss.phase == 2:
                 rocket = Rocket(400, 200, player, all_sprites)
@@ -515,6 +515,10 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
         boss_sprite.draw(screen)
+        if not (boss.rect.bottom < boss.y) and boss_sprite: # если босс спустился появляется босс бар
+            boss_hp_x = (124 / 50) * boss.hp
+            pygame.draw.rect(screen, pygame.Color("gray"),(boss.rect.centerx - 64, 0,128, 32), 2)
+            pygame.draw.rect(screen, pygame.Color("red"), (boss.rect.centerx - 62, 2,boss_hp_x, 28))
         screen.blit(hp_count, (64, 16))
         screen.blit(points_count, (192, 16))
         pygame.display.flip()
