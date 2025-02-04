@@ -40,7 +40,7 @@ font_medium = pygame.font.Font(None, 45)
 
 def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
     pygame.display.set_caption("Space-Run")
-    intro_text = ["Space-Run", "", "Начать", "Рекорды"]
+    intro_text = ["Space-Run", "", "Начать", "Рекорды", "Выйти"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -78,9 +78,12 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
                             return "game"
                         elif intro_text[i] == "Рекорды":
                             return 'records'
+                        elif intro_text[i] == "Выйти":
+                            return "exit"
 
         pygame.display.flip()
         clock.tick(FPS)
+
 
 def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
     conn = None
@@ -112,8 +115,8 @@ def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
 
             # ШРИФТЫ
             title_font = pygame.font.SysFont('Arial', 50, bold=True)  # Используем шрифт Arial, жирный
-            record_font = pygame.font.SysFont('Arial', 28) # Используем шрифт Arial
-            back_font = pygame.font.SysFont('Arial', 24) # Используем шрифт Arial
+            record_font = pygame.font.SysFont('Arial', 28)  # Используем шрифт Arial
+            back_font = pygame.font.SysFont('Arial', 24)  # Используем шрифт Arial
 
             # Заголовок
             title_text = title_font.render("Последние Рекорды", True, WHITE)
@@ -142,6 +145,7 @@ def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
         if conn:
             conn.close()
 
+
 def draw_text(text, font, color, surface, x, y):
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect()
@@ -157,7 +161,9 @@ def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
                   "",
                   "RETRY!",
                   "",
-                  "MENU"]
+                  "MENU",
+                  "",
+                  "EXIT"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('LoseBackground.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -191,11 +197,56 @@ def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
                             return "game"
                         elif intro_text[i] == "MENU":
                             return 'menu'
+                        elif intro_text[i] == "EXIT":
+                            return "exit"
 
         pygame.display.flip()
         clock.tick(FPS)
 
 
+def win_screen(screen, clock, FPS, WIDTH, HEIGHT):
+    records(score.enemy, score.bigE, score.rockets, score.smallE, score.score)
+
+    intro_text = [f"SCORE: {score.score}",
+                  "",
+                  "MENU",
+                  "",
+                  "EXIT"]
+    screen.fill((0, 0, 0))
+    fon = pygame.transform.scale(load_image('WinFon.png'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
+    # ШРИФТ
+    font = pygame.font.Font(None, 40)
+
+    text_coord = HEIGHT // 1.8
+    text_rects = []
+
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.top = text_coord
+        intro_rect.x = WIDTH // 2 - 50
+        screen.blit(string_rendered, intro_rect)
+        text_rects.append(intro_rect)
+        text_coord += 30
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return "exit"
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                for i, rect in enumerate(text_rects):
+                    if rect.collidepoint(mouse_pos):
+                        if intro_text[i] == "MENU":
+                            return 'menu'
+                        elif intro_text[i] == "EXIT":
+                            return "exit"
+
+        pygame.display.flip()
+        clock.tick(FPS)
 # Первый левел(он не такой должен быть это к примеру)
 
 def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites, boosts_sprites, my_font):
@@ -460,7 +511,11 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
                 pygame.time.set_timer(SHOOTCD, 500)  # запуск кд на выстрел
                 can_shoot = False
             # События БОССА
-
+            if boss.hp <= 0:
+                for x in all_sprites, enemy_sprites, boosts_sprites, boss_sprite:
+                    for y in x:
+                        y.kill()
+                return "win"
             if laser_boss_cd:
                 if boss.phase == 1:
                     pygame.time.set_timer(BOSSLASER, 1000)
@@ -519,6 +574,7 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
                 laser2.kill()
                 laser_time_change = True
 
+
         # проверка на потерю хп чтобы удалить спрайты
         hp_count = my_font.render(str(player.hp), False, (255, 255, 255))
         points_count = my_font.render(str(score.score), False, (255, 255, 255))
@@ -532,10 +588,10 @@ def boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, ene
         enemy_sprites.draw(screen)
         boosts_sprites.draw(screen)
         boss_sprite.draw(screen)
-        if not (boss.rect.bottom < boss.y) and boss_sprite: # если босс спустился появляется босс бар
+        if not (boss.rect.bottom < boss.y) and boss_sprite:  # если босс спустился появляется босс бар
             boss_hp_x = (124 / 50) * boss.hp
-            pygame.draw.rect(screen, pygame.Color("gray"),(boss.rect.centerx - 64, 0,128, 32), 2)
-            pygame.draw.rect(screen, pygame.Color("red"), (boss.rect.centerx - 62, 2,boss_hp_x, 28))
+            pygame.draw.rect(screen, pygame.Color("gray"), (boss.rect.centerx - 64, 0, 128, 32), 2)
+            pygame.draw.rect(screen, pygame.Color("red"), (boss.rect.centerx - 62, 2, boss_hp_x, 28))
         screen.blit(hp_count, (64, 16))
         screen.blit(points_count, (192, 16))
         pygame.display.flip()

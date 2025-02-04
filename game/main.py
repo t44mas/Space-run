@@ -2,7 +2,7 @@ from classes import MainShip, Bullet, EnemyShip, HP, HPBoost, SHIP_SPEED
 from classes import all_sprites, enemy_sprites, boosts_sprites, enemy_bullets_sprites, \
     player_bullets_sprites, boss_sprite
 from config import size, screen_width, screen_height, FPS, MUSIC_VOLUME, EFFECT_VOLUME, db_file
-from levels import level_one, start_screen, lose_screen, get_top_scores, boss_level
+from levels import level_one, start_screen, lose_screen, get_top_scores, boss_level, win_screen
 import pygame
 
 # Переменные
@@ -20,6 +20,8 @@ while True:
     if screen_state == "boss":
         screen_state = boss_level(screen, clock, FPS, screen_width, screen_height, all_sprites, enemy_sprites,
                                   boosts_sprites, boss_sprite, my_font)
+    if screen_state == "win":
+        screen_state = win_screen(screen, clock, FPS, screen_width, screen_height)
     if screen_state == "lose":
         screen_state = lose_screen(screen, clock, FPS, screen_width, screen_height)
     if screen_state == 'records':
