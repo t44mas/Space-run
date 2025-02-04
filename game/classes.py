@@ -90,13 +90,16 @@ class MainShip(pygame.sprite.Sprite):
                     self.hp -= 1
         collided_boosts = pygame.sprite.spritecollide(self, boosts_sprites, True, pygame.sprite.collide_mask)
         if collided_boosts:
-            self.hp += 1
-        collided_enemys = pygame.sprite.spritecollide(self, enemy_sprites, True, pygame.sprite.collide_mask)
+            self.hp += 3
+        collided_enemys = pygame.sprite.spritecollide(self, enemy_sprites, False, pygame.sprite.collide_mask)
         if collided_enemys:
-            self.hp -= 1
             for enemy in collided_enemys:
-                boom2 = Boom(enemy.image, enemy.rect, all_sprites, size=1.25)
-                enemy.kill()
+                damage_to_player = enemy.damage
+                self.hp -= damage_to_player
+                enemy.hp -= 1
+                if enemy.hp <= 0:
+                    boom1 = Boom(enemy.image, enemy.rect, all_sprites, size=1.25)
+                    enemy.kill()
     # метод для движения при нажатии на клавиши wasd
     def handle_input(self, event):
         if event.type == pygame.KEYDOWN:
@@ -144,7 +147,8 @@ class EnemyShip(pygame.sprite.Sprite):
         self.change_dir = change_dir
         self.player = player
         self.mask = pygame.mask.from_surface(self.image)
-
+        self.hp = 1
+        self.damage = 1
     def update(self):
         if self.rect.bottom < self.y:
             self.startAnim()
@@ -188,6 +192,7 @@ class BigEnemyShip(pygame.sprite.Sprite):
         self.direction_x = dir_x  # направление 1(налево) или -1 (направо)
         self.direction_y = True
         self.hp = 3
+        self.damage = 1
         self.player = player
         original_image = load_image("BigEnemyShip.png", -1)
         scaled_image = pygame.transform.scale(original_image, (self.screen_width // 10, self.screen_height // 10))
@@ -269,6 +274,8 @@ class Rocket(pygame.sprite.Sprite):
 
         self.mask = pygame.mask.from_surface(self.image)
 
+        self.hp = 1
+        self.damage = 1
     def update(self):
         collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True, pygame.sprite.collide_mask)
         collided_players = pygame.sprite.spritecollide(self, player_sprite, False,
@@ -374,6 +381,8 @@ class SmallEnemy(pygame.sprite.Sprite):
 
         self.mask = pygame.mask.from_surface(self.image)
 
+        self.hp = 1
+        self.damage = 1
     def update(self):
         collided_bullets = pygame.sprite.spritecollide(self, player_bullets_sprites, True, pygame.sprite.collide_mask)
         if collided_bullets:  # проверка если попали пулей

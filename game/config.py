@@ -13,8 +13,8 @@ ROCKET_SPEED = 4
 # получаем информацию о дисплее
 pygame.init()
 info = pygame.display.Info()
-screen_width = info.current_w - 100
-screen_height = info.current_h - 100
+screen_width = info.current_w
+screen_height = info.current_h
 size = screen_width, screen_height
 #дб
 db_file = 'records.db'

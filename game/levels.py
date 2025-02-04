@@ -37,28 +37,31 @@ font_medium = pygame.font.Font(None, 45)
 
 
 # начальный экран
+
 def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
-    intro_text = ["ЗАСТАВКА", "",
-                  "Начать",
-                  "рекорды"]
+    pygame.display.set_caption("Space-Run")
+    intro_text = ["Space-Run", "", "Начать", "Рекорды"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-    # ШРИФТ
-    font = pygame.font.Font(None, 30)
+    # ШРИФТЫ
+    title_font = pygame.font.Font(None, 70)
+    button_font = pygame.font.Font(None, 40)
 
-    text_coord = 200
+    text_coord = HEIGHT // 4
     text_rects = []
 
-    for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        intro_rect.top = text_coord
-        intro_rect.x = 100
+    for i, line in enumerate(intro_text):
+        if i == 0:
+            font = title_font
+        else:
+            font = button_font
+        string_rendered = font.render(line, True, (255, 255, 255))
+        intro_rect = string_rendered.get_rect(center=(WIDTH // 2, text_coord))
         screen.blit(string_rendered, intro_rect)
         text_rects.append(intro_rect)
-        text_coord += 60
+        text_coord += 70
 
     while True:
         for event in pygame.event.get():
@@ -68,17 +71,16 @@ def start_screen(screen, clock, FPS, WIDTH, HEIGHT):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 for i, rect in enumerate(text_rects):
+                    if i == 0:
+                        continue
                     if rect.collidepoint(mouse_pos):
                         if intro_text[i] == "Начать":
                             return "game"
-                        elif intro_text[i] == "рекорды":
+                        elif intro_text[i] == "Рекорды":
                             return 'records'
-                        elif intro_text[i] == "правила":
-                            pass
 
         pygame.display.flip()
         clock.tick(FPS)
-
 
 def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
     conn = None
@@ -86,7 +88,7 @@ def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("""
-                    SELECT id, EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points
+              SELECT id, EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points
                     FROM records
                     ORDER BY id DESC
                     LIMIT ?
@@ -103,19 +105,33 @@ def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
                     if event.key == pygame.K_ESCAPE:
                         return 'menu'
 
+            # Фон
             screen.fill(BLACK)
+            fon = pygame.transform.scale(load_image('fon.png'), (WIDTH, HEIGHT))
+            screen.blit(fon, (0, 0))
 
-            title_text = font_medium.render("Последние Рекорды", True, WHITE)
+            # ШРИФТЫ
+            title_font = pygame.font.SysFont('Arial', 50, bold=True)  # Используем шрифт Arial, жирный
+            record_font = pygame.font.SysFont('Arial', 28) # Используем шрифт Arial
+            back_font = pygame.font.SysFont('Arial', 24) # Используем шрифт Arial
+
+            # Заголовок
+            title_text = title_font.render("Последние Рекорды", True, WHITE)
             title_rect = title_text.get_rect(center=(WIDTH // 2, 50))
             screen.blit(title_text, title_rect)
 
-            y_offset = 100
+            # Вывод рекордов
+            y_offset = 120
             for number, (id, EnemyShip, BigEnemyShip, Rocket, SmallEnemy, Points) in enumerate(records, 1):
-                text = f"{number}. id: {id},  Enemy: {EnemyShip},  BigEnemy: {BigEnemyShip},  Rocket: {Rocket},  SmallEnemy: {SmallEnemy},  Points: {Points}"
-                draw_text(text, font_small, WHITE, screen, 50, y_offset)
-                y_offset += 50
+                text = f"{number:2}. id:{id:4} | Enemy:{EnemyShip:3} | Big:{BigEnemyShip:3} | Rocket:{Rocket:3} | Small:{SmallEnemy:3} | Points:{Points:6}"
+                text_obj = record_font.render(text, True, WHITE)
+                text_rect = text_obj.get_rect(center=(WIDTH // 2, y_offset))
+                screen.blit(text_obj, text_rect)
+                y_offset += 40
 
-            draw_text("Нажмите ESC, чтобы вернуться", font_small, GRAY, screen, 50, HEIGHT - 50)
+            back_text = back_font.render("Нажмите ESC, чтобы вернуться", True, GRAY)
+            back_rect = back_text.get_rect(center=(WIDTH // 2, HEIGHT - 40))
+            screen.blit(back_text, back_rect)
 
             pygame.display.flip()
             clock.tick(FPS)
@@ -126,8 +142,7 @@ def get_top_scores(screen, clock, FPS, db_path, WIDTH, HEIGHT, limit=10):
         if conn:
             conn.close()
 
-
-def draw_text(text, font, color, surface, x, y):  # рисуем текст
+def draw_text(text, font, color, surface, x, y):
     text_obj = font.render(text, True, color)
     text_rect = text_obj.get_rect()
     text_rect.left = x
@@ -142,7 +157,7 @@ def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
                   "",
                   "RETRY!",
                   "",
-                  "Records"]
+                  "MENU"]
     screen.fill((0, 0, 0))
     fon = pygame.transform.scale(load_image('LoseBackground.png'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -174,8 +189,8 @@ def lose_screen(screen, clock, FPS, WIDTH, HEIGHT):
                         if intro_text[i] == "RETRY!":
                             score.clear()
                             return "game"
-                        elif intro_text[i] == "Records":
-                            return 'records'
+                        elif intro_text[i] == "MENU":
+                            return 'menu'
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -204,6 +219,8 @@ def level_one(screen, clock, FPS, screen_width, screen_height, all_sprites, enem
     HP1 = HP(128, 16)
     POINTS = Points(272, 16)
     SPEEDBOOST = SpeedBoost(96, 96)
+
+    score.score = 0
 
     # Волны врагов
     wave = 1  # 1-4 волны, другое число - босс уровень

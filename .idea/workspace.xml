@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="Лазеры доделал">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/classes.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/classes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/levels.py" afterDir="false" />
-    </list>
+    <list default="true" id="90af07e8-dd48-4a4a-8189-734c154e9905" name="Changes" comment="сделал покрасивее экран рекордов" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,7 +13,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="game" />
+        <entry key="$PROJECT_DIR$" value="f90859197432749c50841fe94f29f6e64d9f88e8" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -33,18 +29,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.classes.executor": "Run",
-    "Python.main.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "bf0ce2d8",
-    "last_opened_file_path": "C:/Users/user/PycharmProjects/Space-run/game/data",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.classes.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;game&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/user/PycharmProjects/Space-run/game/data&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\user\PycharmProjects\Space-run\game\data" />
@@ -64,7 +60,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="Python 3.11 (Space-run)" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/game" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -228,23 +223,31 @@
       <option name="project" value="LOCAL" />
       <updated>1738605086407</updated>
     </task>
-    <task id="LOCAL-00017" summary="Исправил баг с переходом на босс уровень">
+    <task id="LOCAL-00017" summary="просто добавил красивый фон">
       <option name="closed" value="true" />
-      <created>1738605347798</created>
+      <created>1738607781104</created>
       <option name="number" value="00017" />
       <option name="presentableId" value="LOCAL-00017" />
       <option name="project" value="LOCAL" />
-      <updated>1738605347798</updated>
+      <updated>1738607781104</updated>
     </task>
-    <task id="LOCAL-00018" summary="Лазеры доделал">
+    <task id="LOCAL-00018" summary="мелкие фиксы коллизии">
       <option name="closed" value="true" />
-      <created>1738605897157</created>
+      <created>1738613075394</created>
       <option name="number" value="00018" />
       <option name="presentableId" value="LOCAL-00018" />
       <option name="project" value="LOCAL" />
-      <updated>1738605897157</updated>
+      <updated>1738613075394</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="сделал покрасивее экран рекордов">
+      <option name="closed" value="true" />
+      <created>1738623787372</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1738623787372</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -275,8 +278,9 @@
     <MESSAGE value="Сделал вторую фазу" />
     <MESSAGE value="Сделал переход от 1 уровня к боссу" />
     <MESSAGE value="Босс стреляет лазером в место где был игрок, а так же сделал взрыв врагов от столкновения с игроком" />
-    <MESSAGE value="Исправил баг с переходом на босс уровень" />
-    <MESSAGE value="Лазеры доделал" />
-    <option name="LAST_COMMIT_MESSAGE" value="Лазеры доделал" />
+    <MESSAGE value="просто добавил красивый фон" />
+    <MESSAGE value="мелкие фиксы коллизии" />
+    <MESSAGE value="сделал покрасивее экран рекордов" />
+    <option name="LAST_COMMIT_MESSAGE" value="сделал покрасивее экран рекордов" />
   </component>
 </project>
